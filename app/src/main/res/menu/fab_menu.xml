@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <item
+        android:id="@+id/fab_link"
+        android:icon="@drawable/camera_48"
+        android:title="Camera" />
+
+    <item
+        android:id="@+id/fab_add"
+        android:icon="@drawable/upload_64"
+        android:title="Upload" />
+
+</menu>

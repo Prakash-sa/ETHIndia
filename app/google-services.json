@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "811845239331",
+    "firebase_url": "https://pune-be098.firebaseio.com",
+    "project_id": "pune-be098",
+    "storage_bucket": "pune-be098.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:811845239331:android:fd1c21a50abc7c8d082796",
+        "android_client_info": {
+          "package_name": "com.example.hackathonpune"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "811845239331-jsuu1g9p0svr8oikqi522hpn09743pmd.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.hackathonpune",
+            "certificate_hash": "abfcce020ffe691c268b10e8afcab22247edfd1f"
+          }
+        },
+        {
+          "client_id": "811845239331-b3e4k6nfqq29sm9464fouuoeu29c2v78.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDhUstGVVu2vPfvFehvbmwqU_DOZ9oOiAs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "811845239331-b3e4k6nfqq29sm9464fouuoeu29c2v78.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
