@@ -3,9 +3,7 @@ Use Firebase storage to store images of low quality and when we want to download
 
 # Demo
 
-
-![alt text](https://github.com/Prakash-sa/HackathonPune/blob/master/Screenrecorder-2019-12-22-10-59-44-561.mp4)
-
+https://github.com/Prakash-sa/HackathonPune/blob/master/Screenrecorder-2019-12-22-10-59-44-561.mp4
 
 
 # Features
