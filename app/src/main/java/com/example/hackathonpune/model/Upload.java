@@ -1,9 +1,12 @@
-package com.example.hackathonpune;
+package com.example.hackathonpune.model;
 
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.util.Log;
 
+import com.example.hackathonpune.Algorithms.Sizeofbase64;
+import com.example.hackathonpune.Algorithms.ImageConverter;
+import com.example.hackathonpune.Algorithms.StoreImage;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
@@ -29,7 +32,7 @@ public class Upload {
     private FirebaseUser user;
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference myRef = database.getReference(Database_Path);
-    final String url11="http://91584517.ngrok.io/";
+    final String url11="http://1353222f.ngrok.io/";
 
     public void upploadimageflask(String image) {
         final String url1=url11+"jj";

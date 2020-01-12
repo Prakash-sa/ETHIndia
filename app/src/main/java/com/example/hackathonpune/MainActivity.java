@@ -4,7 +4,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.core.content.FileProvider;
 
 import android.Manifest;
 import android.app.Activity;
@@ -18,22 +17,17 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.Toast;
 import android.widget.VideoView;
 
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-
-import java.io.IOException;
-import java.sql.Array;
-import java.util.Arrays;
-import java.util.List;
+import com.example.hackathonpune.Algorithms.ImageConverter;
+import com.example.hackathonpune.model.Receive;
+import com.example.hackathonpune.model.Upload;
+import com.example.hackathonpune.ui.DisplayImageActivity;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -124,7 +118,7 @@ public class MainActivity extends AppCompatActivity {
         viewphotosbt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this,DisplayImageActivity.class));
+                startActivity(new Intent(MainActivity.this, DisplayImageActivity.class));
 
             }
         });

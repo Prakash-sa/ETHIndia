@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:id="@+id/constraint"
     android:layout_height="match_parent"
-    tools:context=".Signinup">
+    tools:context=".ui.Signinup">
 
 
     <EditText

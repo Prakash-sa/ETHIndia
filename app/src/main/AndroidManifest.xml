@@ -15,9 +15,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".Signinup" android:theme="@style/NoActionbar"></activity>
+        <activity android:name=".ui.Signinup" android:theme="@style/NoActionbar"></activity>
         <activity
-            android:name=".Splashactivity"
+            android:name=".ui.Splashactivity"
             android:theme="@style/NoActionbar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -25,10 +25,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".DisplayImageActivity" />
+        <activity android:name=".ui.DisplayImageActivity" />
         <activity
-            android:name=".ViewImage"
-            android:parentActivityName=".DisplayImageActivity"
+            android:name=".ui.ViewImage"
+            android:parentActivityName=".ui.DisplayImageActivity"
             android:theme="@style/NoActionbar" />
         <activity
             android:name=".MainActivity"

@@ -1,18 +1,17 @@
-package com.example.hackathonpune;
+package com.example.hackathonpune.ui;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
 
 import android.content.Intent;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
-import android.transition.TransitionInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.hackathonpune.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -76,7 +75,7 @@ public class Signinup extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             Toast.makeText(Signinup.this,"Welcome ",Toast.LENGTH_LONG).show();
                             FirebaseUser user = mAuth.getCurrentUser();
-                            startActivity(new Intent(Signinup.this,DisplayImageActivity.class));
+                            startActivity(new Intent(Signinup.this, DisplayImageActivity.class));
                             finish();
 
                         } else {

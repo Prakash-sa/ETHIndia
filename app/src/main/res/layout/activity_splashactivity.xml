@@ -7,7 +7,7 @@
     android:orientation="vertical"
     android:weightSum="3"
     android:background="#ffffff"
-    tools:context=".Splashactivity">
+    tools:context=".ui.Splashactivity">
 
     <TextView
         android:id="@+id/textView"

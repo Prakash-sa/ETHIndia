@@ -1,46 +1,28 @@
-package com.example.hackathonpune;
+package com.example.hackathonpune.ui;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.app.ActionBar;
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
-import android.media.Image;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
-import android.os.Looper;
-import android.os.Message;
 import android.transition.TransitionInflater;
 import android.util.Log;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.VideoView;
 
+import com.example.hackathonpune.Algorithms.Bitmaptransfer;
+import com.example.hackathonpune.Algorithms.ImageConverter;
+import com.example.hackathonpune.MainActivity;
+import com.example.hackathonpune.R;
+import com.example.hackathonpune.Algorithms.StoreImage;
+import com.example.hackathonpune.model.Upload;
 import com.github.clans.fab.FloatingActionButton;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
-import com.google.firebase.database.ValueEventListener;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 
 public class ViewImage extends AppCompatActivity {
@@ -124,7 +106,7 @@ public class ViewImage extends AppCompatActivity {
                 DatabaseReference ref = FirebaseDatabase.getInstance().getReference(MainActivity.Database_Path);
                 ref.child(keyofimage).removeValue();
                 Log.i("key",keyofimage);
-                startActivity(new Intent(ViewImage.this,DisplayImageActivity.class));
+                startActivity(new Intent(ViewImage.this, DisplayImageActivity.class));
                 finish();
             }
         });

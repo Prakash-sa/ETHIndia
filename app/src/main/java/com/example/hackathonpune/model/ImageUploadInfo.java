@@ -1,4 +1,4 @@
-package com.example.hackathonpune;
+package com.example.hackathonpune.model;
 
 import java.util.List;
 

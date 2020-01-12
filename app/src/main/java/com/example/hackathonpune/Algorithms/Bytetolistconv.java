@@ -1,4 +1,4 @@
-package com.example.hackathonpune;
+package com.example.hackathonpune.Algorithms;
 
 import java.util.ArrayList;
 import java.util.List;

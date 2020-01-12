@@ -1,15 +1,14 @@
-package com.example.hackathonpune;
+package com.example.hackathonpune.ui;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityOptionsCompat;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.example.hackathonpune.R;
 
 public class Splashactivity extends AppCompatActivity {
 
@@ -27,7 +26,7 @@ public class Splashactivity extends AppCompatActivity {
             @Override
             public void run() {
 
-                Intent intent=new Intent(Splashactivity.this,DisplayImageActivity.class);
+                Intent intent=new Intent(Splashactivity.this, DisplayImageActivity.class);
                 startActivity(intent);
                 finish();
             }

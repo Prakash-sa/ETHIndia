@@ -1,4 +1,4 @@
-package com.example.hackathonpune;
+package com.example.hackathonpune.Adapter;
 
 
 import android.app.Activity;
@@ -10,16 +10,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.core.app.ActivityOptionsCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 
+import com.example.hackathonpune.Algorithms.Bitmaptransfer;
+import com.example.hackathonpune.Algorithms.ImageConverter;
+import com.example.hackathonpune.model.ImageUploadInfo;
+import com.example.hackathonpune.R;
+import com.example.hackathonpune.ui.ViewImage;
 import com.github.clans.fab.FloatingActionButton;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.util.List;
 
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder> {
@@ -56,7 +58,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         holder.imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent=new Intent(context,ViewImage.class);
+                Intent intent=new Intent(context, ViewImage.class);
                 intent.putExtra("keyis",keyofimage.get(position));
                 androidx.core.util.Pair<View,String>pair1=androidx.core.util.Pair.create((View)holder.imageView,"imagetran");
 

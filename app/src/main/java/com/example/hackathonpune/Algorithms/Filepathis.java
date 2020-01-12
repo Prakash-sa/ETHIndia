@@ -1,4 +1,4 @@
-package com.example.hackathonpune;
+package com.example.hackathonpune.Algorithms;
 
 public class Filepathis {
     private static String file_path;

@@ -1,4 +1,4 @@
-package com.example.hackathonpune;
+package com.example.hackathonpune.Algorithms;
 public class Sizeofbase64 {
     public Double calcBase64SizeInKBytes(String base64String) {
         Double result = -1.0;

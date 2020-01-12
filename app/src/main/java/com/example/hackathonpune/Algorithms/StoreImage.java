@@ -1,11 +1,9 @@
-package com.example.hackathonpune;
+package com.example.hackathonpune.Algorithms;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Environment;
 import android.util.Log;
-import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileNotFoundException;
