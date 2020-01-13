@@ -181,7 +181,7 @@ public class MainActivity extends AppCompatActivity {
                     cursor.close();
                     bitmap = BitmapFactory.decodeFile(imgDecodableString);
                     String encodedImage = imageConverter.getStringFromBitmap(bitmap);
-                    upload.upploadimageflask(encodedImage);
+                   // upload.upploadimageflask(encodedImage);
         }
     }
 

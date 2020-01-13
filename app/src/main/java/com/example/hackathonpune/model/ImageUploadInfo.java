@@ -8,9 +8,6 @@ public class ImageUploadInfo {
     public String imageURL;
     public Double size;
 
-    public ImageUploadInfo() {
-
-    }
 
     public ImageUploadInfo(String name,String url,Double size) {
 
@@ -23,7 +20,6 @@ public class ImageUploadInfo {
         return imageName;
     }
 
-    public Double getSize(){return size;}
 
     public String getImageURL() {
         return imageURL;

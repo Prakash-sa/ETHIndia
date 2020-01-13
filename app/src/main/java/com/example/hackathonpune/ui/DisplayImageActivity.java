@@ -32,6 +32,8 @@ import com.example.hackathonpune.Algorithms.ImageConverter;
 import com.example.hackathonpune.model.ImageUploadInfo;
 import com.example.hackathonpune.MainActivity;
 import com.example.hackathonpune.R;
+import com.example.hackathonpune.model.Ipfssendflask;
+import com.example.hackathonpune.model.Parsejson;
 import com.example.hackathonpune.model.Receive;
 import com.example.hackathonpune.Adapter.RecyclerViewAdapter;
 import com.example.hackathonpune.model.Upload;
@@ -51,6 +53,10 @@ public class DisplayImageActivity extends AppCompatActivity {
 
     DatabaseReference databaseReference;
     RecyclerView recyclerView;
+
+    private Ipfssendflask ipfssendflask=new Ipfssendflask();
+
+    private String username;
 
     private FirebaseUser user;
     private FirebaseAuth mAuth;
@@ -83,6 +89,7 @@ public class DisplayImageActivity extends AppCompatActivity {
         super.onStart();
         // Check if user is signed in (non-null) and update UI accordingly.
         FirebaseUser currentUser = mAuth.getCurrentUser();
+        username=currentUser.getEmail();
         if(currentUser==null){
             startActivity(new Intent(DisplayImageActivity.this, Signinup.class));
         }
@@ -130,41 +137,12 @@ public class DisplayImageActivity extends AppCompatActivity {
 
 
         progressDialog = new ProgressDialog(DisplayImageActivity.this);
-        progressDialog.setMessage("Loading Images From Firebase.");
+        progressDialog.setMessage("Loading Images From Database.");
         progressDialog.show();
 
-        databaseReference = FirebaseDatabase.getInstance().getReference(MainActivity.Database_Path);
-        databaseReference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot snapshot) {
+        updaterecyclerview();
 
-                double sum=0;
-                list.clear();
-                keyofimage.clear();
-                for (DataSnapshot postSnapshot : snapshot.getChildren()) {
-                    ImageUploadInfo imageUploadInfo = postSnapshot.getValue(ImageUploadInfo.class);
-                    String keyvalue=postSnapshot.getKey();
-                    if((user!=null)&&(user.getEmail().equals(imageUploadInfo.imageName))){
-                        list.add(imageUploadInfo);
-                        keyofimage.add(keyvalue);
-                        sum+=  imageUploadInfo.getSize();
-                    }
-                }
-                String textis="Storage: "+(int)sum+" Kb";
-                textView.setText(textis);
-                Log.i("text is",sum+"");
-                Log.i("size is"," "+list.size());
-                adapter = new RecyclerViewAdapter(DisplayImageActivity.this, list,keyofimage);
-                recyclerView.setAdapter(adapter);
-                progressDialog.dismiss();
-            }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                progressDialog.dismiss();
-
-            }
-        });
 
         uploadgallery.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -196,6 +174,23 @@ public class DisplayImageActivity extends AppCompatActivity {
         });
 
 
+
+    }
+
+    private void updaterecyclerview() {
+        ipfssendflask.upploadimagedownload(username);
+
+        ImageUploadInfo imageUploadInfo=null;
+        Parsejson parsejson=new Parsejson();
+        List<String>s=parsejson.getlist();
+        list.clear();
+        for(int i=0;i<s.size();i++){
+            imageUploadInfo=new ImageUploadInfo("",s.get(i),0.0);
+            list.add(imageUploadInfo);
+        }
+        adapter = new RecyclerViewAdapter(DisplayImageActivity.this, list,keyofimage);
+        recyclerView.setAdapter(adapter);
+        progressDialog.dismiss();
 
     }
 
@@ -259,13 +254,13 @@ public class DisplayImageActivity extends AppCompatActivity {
                 cursor.close();
                 bitmap = BitmapFactory.decodeFile(imgDecodableString);
                 String encodedImage = imageConverter.getStringFromBitmap(bitmap);
-                upload.upploadimageflask(encodedImage);
+                upload.upploadimageflask(username,encodedImage);
             }
             if(requestCode==PICK_FROM_CAMERA){
                 Bundle extras = data.getExtras();
                 Bitmap imageBitmap = (Bitmap) extras.get("data");
                     String encodedImage = imageConverter.getStringFromBitmap(imageBitmap);
-                    upload.upploadimageflask(encodedImage);
+                    upload.upploadimageflask(username,encodedImage);
 
             }
             if(requestCode==PICK_VIDEO_CAMERA){
@@ -279,7 +274,7 @@ public class DisplayImageActivity extends AppCompatActivity {
                 Bitmap thumb = ThumbnailUtils.createVideoThumbnail(filePath, MediaStore.Video.Thumbnails.MINI_KIND);
                 String baseVideo=imageConverter.getStringFromBitmap(thumb);
                 Log.i("VideoString ",baseVideo);
-                upload.upploadimageflask(baseVideo);
+                upload.upploadimageflask(username,baseVideo);
             }
         }
     }

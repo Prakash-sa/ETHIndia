@@ -1,16 +1,13 @@
 package com.example.hackathonpune.model;
 
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.util.Log;
 
-import com.example.hackathonpune.Algorithms.Sizeofbase64;
 import com.example.hackathonpune.Algorithms.ImageConverter;
+import com.example.hackathonpune.Algorithms.Sizeofbase64;
 import com.example.hackathonpune.Algorithms.StoreImage;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -25,15 +22,14 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import static com.example.hackathonpune.MainActivity.Database_Path;
+public class Ipfssendflask {
+    final String url11="http://172.37.38.153:5002/";
 
-public class Upload {
+    private Parsejson parsejson=new Parsejson();
 
-    Ipfssendflask ipfssendflask=new Ipfssendflask();
-    final String url11="http://1b4916ab.ngrok.io/";
+    public void upploadimageflask(final String username, String image) {
+        final String url1=url11+"store";
 
-    public void upploadimageflask(final String username,String image) {
-        final String url1=url11+"jj";
 
         final String image11=image;
         new Thread(new Runnable() {
@@ -51,7 +47,8 @@ public class Upload {
 
                     try {
                         JSONObject obj = new JSONObject();
-                        obj.put("key1" , image11);
+                        obj.put("name" , username);
+                        obj.put("image" , image11);
 
                         wr.writeBytes(obj.toString());
                         Log.i("JSON Input", obj.toString());
@@ -68,10 +65,6 @@ public class Upload {
                     if(responseCode == HttpURLConnection.HTTP_OK){
                         String server_response = readStream(urlConnection.getInputStream());
                         Log.i("Response",server_response);
-
-                        ipfssendflask.upploadimageflask(username,server_response);
-
-
                     }
 
                 } catch (MalformedURLException e) {
@@ -85,10 +78,8 @@ public class Upload {
 
     }
 
-    public void upploadimagedownload(final Context context,String image) {
+    public void upploadimagedownload(final String username) {
         final String url1=url11+"js";
-        final String filepath;
-        final String image11=image;
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -104,7 +95,7 @@ public class Upload {
 
                     try {
                         JSONObject obj = new JSONObject();
-                        obj.put("key1" , image11);
+                        obj.put("name" , username);
 
                         wr.writeBytes(obj.toString());
                         Log.i("JSON Input", obj.toString());
@@ -121,10 +112,7 @@ public class Upload {
                     if(responseCode == HttpURLConnection.HTTP_OK){
                         String server_response = readStream(urlConnection.getInputStream());
                         Log.i("Response",server_response);
-                        ImageConverter imageConverter=new ImageConverter();
-                        Bitmap bm=imageConverter.getBitmapFromString(server_response);
-                        StoreImage storeImage=new StoreImage();
-                        storeImage.storeImage(context,bm);
+                        parsejson.getstring(server_response);
 
                     }
 
