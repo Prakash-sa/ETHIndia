@@ -30,6 +30,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.hackathonpune.Algorithms.CacheImage;
 import com.example.hackathonpune.Algorithms.ImageConverter;
 import com.example.hackathonpune.Algorithms.StoreImage;
 import com.example.hackathonpune.ConstantsIt;
@@ -84,6 +85,7 @@ public class DisplayImageActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private static final int RC_SIGN_IN=1;
     private FirebaseAuth.AuthStateListener firebaseAUthList;
+    private CacheImage cacheImage;
 
     ImageConverter imageConverter;
     Parsejson parsejson;
@@ -191,7 +193,8 @@ public class DisplayImageActivity extends AppCompatActivity {
             }
         });
 
-
+        // initialise cacheObject
+        cacheImage = new CacheImage(DisplayImageActivity.this);
 
     }
 
@@ -259,13 +262,27 @@ public class DisplayImageActivity extends AppCompatActivity {
                 cursor.close();
                 bitmap = BitmapFactory.decodeFile(imgDecodableString);
                 String encodedImage = imageConverter.getStringFromBitmap(bitmap);
-                new ImageUploadIPFSandML().execute(encodedImage);
+                try {
+                    cacheImage.cacheFromBitmap(bitmap, filename);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } finally {
+                    new ImageUploadIPFSandML().execute(encodedImage);
+                }
+
             }
             if(requestCode==PICK_FROM_CAMERA){
                 Bundle extras = data.getExtras();
                 Bitmap imageBitmap = (Bitmap) extras.get("data");
                 String encodedImage = imageConverter.getStringFromBitmap(imageBitmap);
-                new ImageUploadIPFSandML().execute(encodedImage);
+                try {
+                    cacheImage.cacheFromBitmap(bitmap, filename);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } finally {
+                    new ImageUploadIPFSandML().execute(encodedImage);
+                }
+
 
             }
             if(requestCode==PICK_VIDEO_CAMERA){
@@ -278,7 +295,13 @@ public class DisplayImageActivity extends AppCompatActivity {
                 Bitmap thumb = ThumbnailUtils.createVideoThumbnail(filePath, MediaStore.Video.Thumbnails.MINI_KIND);
                 String baseVideo=imageConverter.getStringFromBitmap(thumb);
                 Log.i("VideoString ",baseVideo);
-                new ImageUploadIPFSandML().execute(baseVideo);
+                try {
+                    cacheImage.cacheFromBitmap(thumb, "");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } finally {
+                    new ImageUploadIPFSandML().execute(baseVideo);
+                }
             }
         }
     }
@@ -302,7 +325,6 @@ public class DisplayImageActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
 
     }
-
 
     private class ImageIPFS  extends AsyncTask<Void,Void,Void>{
 
