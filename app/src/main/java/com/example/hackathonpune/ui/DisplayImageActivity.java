@@ -367,10 +367,10 @@ public class DisplayImageActivity extends AppCompatActivity {
             ImageUploadInfo imageUploadInfo=null;
             list.clear();
             for(int i=0;i<imagestring.size();i++){
-                imageUploadInfo=new ImageUploadInfo("",imagestring.get(i),0.0);
+                imageUploadInfo=new ImageUploadInfo(imagestring.get(i));
                 list.add(imageUploadInfo);
             }
-            adapter = new RecyclerViewAdapter(DisplayImageActivity.this, list);
+            adapter = new RecyclerViewAdapter(DisplayImageActivity.this, list,username);
             recyclerView.setAdapter(adapter);
             progressDialog.dismiss();
 

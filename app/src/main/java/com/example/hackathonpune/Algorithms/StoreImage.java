@@ -15,13 +15,13 @@ import java.util.Date;
 
 public class StoreImage {
 
-    public void storeImage(final Context context,Bitmap image) throws IOException {
+    public String storeImage(final Context context,Bitmap image) throws IOException {
 
 
         File pictureFile = createImageFile();
         if (pictureFile == null) {
             Log.i("Error", "Error creating media file, check storage permissions: ");
-            return;
+            return "";
         }
         try {
             OutputStream stream = null;
@@ -43,6 +43,7 @@ public class StoreImage {
         } catch (IOException e) {
             Log.i("Error", "Error accessing file: " + e.getMessage());
         }
+        return pictureFile.toString();
 
 
     }
