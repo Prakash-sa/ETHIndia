@@ -7,6 +7,7 @@ import android.util.Log;
 import com.example.hackathonpune.Algorithms.Sizeofbase64;
 import com.example.hackathonpune.Algorithms.ImageConverter;
 import com.example.hackathonpune.Algorithms.StoreImage;
+import com.example.hackathonpune.ConstantsIt;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
@@ -30,7 +31,7 @@ import static com.example.hackathonpune.MainActivity.Database_Path;
 public class Upload {
 
     Ipfssendflask ipfssendflask=new Ipfssendflask();
-    final String url11="http://1b4916ab.ngrok.io/";
+    final String url11= ConstantsIt.URL;
 
     public void upploadimageflask(final String username,String image) {
         final String url1=url11+"jj";
@@ -86,7 +87,7 @@ public class Upload {
     }
 
     public void upploadimagedownload(final Context context,String image) {
-        final String url1=url11+"js";
+        final String url1=ConstantsIt.URL+"js";
         final String filepath;
         final String image11=image;
         new Thread(new Runnable() {

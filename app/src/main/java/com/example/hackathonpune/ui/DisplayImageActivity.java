@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
@@ -17,6 +18,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.ThumbnailUtils;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -29,6 +31,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.hackathonpune.Algorithms.ImageConverter;
+import com.example.hackathonpune.Algorithms.StoreImage;
+import com.example.hackathonpune.ConstantsIt;
 import com.example.hackathonpune.model.ImageUploadInfo;
 import com.example.hackathonpune.MainActivity;
 import com.example.hackathonpune.R;
@@ -46,17 +50,35 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+
+import static android.icu.util.ULocale.getName;
 
 public class DisplayImageActivity extends AppCompatActivity {
 
     DatabaseReference databaseReference;
+
     RecyclerView recyclerView;
 
     private Ipfssendflask ipfssendflask=new Ipfssendflask();
 
     private String username;
+    private String filename;
+    private List<String>imagestring;
 
     private FirebaseUser user;
     private FirebaseAuth mAuth;
@@ -64,6 +86,7 @@ public class DisplayImageActivity extends AppCompatActivity {
     private FirebaseAuth.AuthStateListener firebaseAUthList;
 
     ImageConverter imageConverter;
+    Parsejson parsejson;
     Receive receive;
     Upload upload;
     Bitmap bitmap;
@@ -89,10 +112,10 @@ public class DisplayImageActivity extends AppCompatActivity {
         super.onStart();
         // Check if user is signed in (non-null) and update UI accordingly.
         FirebaseUser currentUser = mAuth.getCurrentUser();
-        username=currentUser.getEmail();
         if(currentUser==null){
             startActivity(new Intent(DisplayImageActivity.this, Signinup.class));
         }
+        if(currentUser!=null)username=currentUser.getEmail();
     }
 
     @Override
@@ -132,15 +155,10 @@ public class DisplayImageActivity extends AppCompatActivity {
         textView=findViewById(R.id.sizeis);
 
         recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new GridLayoutManager(DisplayImageActivity.this,3));
+        recyclerView.setLayoutManager(new LinearLayoutManager(DisplayImageActivity.this));
 
 
-
-        progressDialog = new ProgressDialog(DisplayImageActivity.this);
-        progressDialog.setMessage("Loading Images From Database.");
-        progressDialog.show();
-
-        updaterecyclerview();
+        (new ImageIPFS()).execute();
 
 
 
@@ -177,22 +195,7 @@ public class DisplayImageActivity extends AppCompatActivity {
 
     }
 
-    private void updaterecyclerview() {
-        ipfssendflask.upploadimagedownload(username);
 
-        ImageUploadInfo imageUploadInfo=null;
-        Parsejson parsejson=new Parsejson();
-        List<String>s=parsejson.getlist();
-        list.clear();
-        for(int i=0;i<s.size();i++){
-            imageUploadInfo=new ImageUploadInfo("",s.get(i),0.0);
-            list.add(imageUploadInfo);
-        }
-        adapter = new RecyclerViewAdapter(DisplayImageActivity.this, list,keyofimage);
-        recyclerView.setAdapter(adapter);
-        progressDialog.dismiss();
-
-    }
 
     private boolean checkPermissionwrite() {
         int result = ContextCompat.checkSelfPermission(DisplayImageActivity.this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE);
@@ -247,6 +250,8 @@ public class DisplayImageActivity extends AppCompatActivity {
             if(requestCode==PICK_FROM_GALLARY) {
                 Uri selectedImage = data.getData();
                 String[] filePathColumn = {MediaStore.Images.Media.DATA};
+                File file= new File(selectedImage.getPath());
+                filename=file.getName();
                 Cursor cursor = getContentResolver().query(selectedImage, filePathColumn, null, null, null);
                 cursor.moveToFirst();
                 int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
@@ -254,13 +259,13 @@ public class DisplayImageActivity extends AppCompatActivity {
                 cursor.close();
                 bitmap = BitmapFactory.decodeFile(imgDecodableString);
                 String encodedImage = imageConverter.getStringFromBitmap(bitmap);
-                upload.upploadimageflask(username,encodedImage);
+                new ImageUploadIPFSandML().execute(encodedImage);
             }
             if(requestCode==PICK_FROM_CAMERA){
                 Bundle extras = data.getExtras();
                 Bitmap imageBitmap = (Bitmap) extras.get("data");
-                    String encodedImage = imageConverter.getStringFromBitmap(imageBitmap);
-                    upload.upploadimageflask(username,encodedImage);
+                String encodedImage = imageConverter.getStringFromBitmap(imageBitmap);
+                new ImageUploadIPFSandML().execute(encodedImage);
 
             }
             if(requestCode==PICK_VIDEO_CAMERA){
@@ -270,11 +275,10 @@ public class DisplayImageActivity extends AppCompatActivity {
                 Cursor cursor = managedQuery(selectedVideoUri, projection, null, null, null);
                 cursor.moveToFirst();
                 String filePath = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DATA));
-
                 Bitmap thumb = ThumbnailUtils.createVideoThumbnail(filePath, MediaStore.Video.Thumbnails.MINI_KIND);
                 String baseVideo=imageConverter.getStringFromBitmap(thumb);
                 Log.i("VideoString ",baseVideo);
-                upload.upploadimageflask(username,baseVideo);
+                new ImageUploadIPFSandML().execute(baseVideo);
             }
         }
     }
@@ -300,5 +304,152 @@ public class DisplayImageActivity extends AppCompatActivity {
     }
 
 
+    private class ImageIPFS  extends AsyncTask<Void,Void,Void>{
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            try {
+                URL url = new URL(ConstantsIt.LOCALURL+"js");
+                HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+                urlConnection.setDoOutput(true);
+                urlConnection.setDoInput(true);
+                urlConnection.setRequestMethod("POST");
+                OutputStream os=urlConnection.getOutputStream();
+
+                DataOutputStream wr = new DataOutputStream(os);
+
+                try {
+                    JSONObject obj = new JSONObject();
+                    obj.put("name" , username);
+
+                    wr.writeBytes(obj.toString());
+                    Log.i("JSON Input", obj.toString());
+                    wr.flush();
+                    wr.close();
+                    os.close();
+                } catch (JSONException ex) {
+                    ex.printStackTrace();
+                }
+
+                int responseCode = urlConnection.getResponseCode();
+                Log.i("RsponseCode", "is "+responseCode);
+
+                if(responseCode == HttpURLConnection.HTTP_OK){
+                    String server_response = readStream(urlConnection.getInputStream());
+                    Log.i("Response",server_response);
+                    imagestring.clear();
+                    imagestring=parsejson.getstring(server_response);
+
+                }
+
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progressDialog = new ProgressDialog(DisplayImageActivity.this);
+            progressDialog.setMessage("Loading Images From Database.");
+            progressDialog.show();
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+
+            if(imagestring==null)return;
+
+            ImageUploadInfo imageUploadInfo=null;
+            list.clear();
+            for(int i=0;i<imagestring.size();i++){
+                imageUploadInfo=new ImageUploadInfo("",imagestring.get(i),0.0);
+                list.add(imageUploadInfo);
+            }
+            adapter = new RecyclerViewAdapter(DisplayImageActivity.this, list);
+            recyclerView.setAdapter(adapter);
+            progressDialog.dismiss();
+
+        }
+    }
+
+    private class ImageUploadIPFSandML extends AsyncTask<String,Void,Void>{
+        @Override
+        protected Void doInBackground(String... strings) {
+            try {
+                URL url = new URL(ConstantsIt.LOCALURL+"jj");
+                HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+                urlConnection.setDoOutput(true);
+                urlConnection.setDoInput(true);
+                urlConnection.setRequestMethod("POST");
+                OutputStream os=urlConnection.getOutputStream();
+
+                DataOutputStream wr = new DataOutputStream(os);
+
+                try {
+                    JSONObject obj = new JSONObject();
+                    obj.put("name" , username);
+                    obj.put("imagename",filename);
+                    obj.put("image" , strings);
+
+                    wr.writeBytes(obj.toString());
+                    Log.i("JSON Input", obj.toString());
+                    wr.flush();
+                    wr.close();
+                    os.close();
+                } catch (JSONException ex) {
+                    ex.printStackTrace();
+                }
+
+                int responseCode = urlConnection.getResponseCode();
+                Log.i("RsponseCode", "is "+responseCode);
+
+                if(responseCode == HttpURLConnection.HTTP_OK){
+                    String server_response = readStream(urlConnection.getInputStream());
+                    Log.i("Response",server_response);
+                }
+
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            new ImageIPFS().execute();
+        }
+
+    }
+
+    public static String readStream(InputStream in) {
+        BufferedReader reader = null;
+        StringBuffer response = new StringBuffer();
+        try {
+            reader = new BufferedReader(new InputStreamReader(in));
+            String line = "";
+            while ((line = reader.readLine()) != null) {
+                response.append(line);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return response.toString();
+    }
 
 }

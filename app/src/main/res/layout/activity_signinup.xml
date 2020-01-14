@@ -8,6 +8,7 @@
     tools:context=".ui.Signinup">
 
 
+
     <EditText
         android:id="@+id/emailtext"
         android:layout_width="wrap_content"

@@ -1,25 +1,17 @@
 package com.example.hackathonpune.Adapter;
 
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
-import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import androidx.core.app.ActivityOptionsCompat;
 import androidx.recyclerview.widget.RecyclerView;
-
-
-import com.example.hackathonpune.Algorithms.Bitmaptransfer;
-import com.example.hackathonpune.Algorithms.ImageConverter;
 import com.example.hackathonpune.model.ImageUploadInfo;
 import com.example.hackathonpune.R;
-import com.example.hackathonpune.ui.ViewImage;
 import com.github.clans.fab.FloatingActionButton;
 
 import java.util.List;
@@ -28,13 +20,11 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     Context context;
     List<ImageUploadInfo> MainImageUploadInfoList;
-    List<String>keyofimage;
 
-    public RecyclerViewAdapter(Context context, List<ImageUploadInfo> TempList,List<String> keyofimage) {
+    public RecyclerViewAdapter(Context context, List<ImageUploadInfo> TempList) {
 
         this.MainImageUploadInfoList = TempList;
         this.context = context;
-        this.keyofimage=keyofimage;
     }
 
     @Override
@@ -50,24 +40,11 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
         final ImageUploadInfo UploadInfo = MainImageUploadInfoList.get(position);
-        ImageConverter imageConverter=new ImageConverter();
-
-
-        final Bitmap imagebitmap=imageConverter.getBitmapFromString(UploadInfo.getImageURL());
-        holder.imageView.setImageBitmap(imagebitmap);
-        holder.imageView.setOnClickListener(new View.OnClickListener() {
+        holder.imageNameTextView.setText(UploadInfo.getImageName());
+        holder.imageNameTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent=new Intent(context, ViewImage.class);
-                intent.putExtra("keyis",keyofimage.get(position));
-                androidx.core.util.Pair<View,String>pair1=androidx.core.util.Pair.create((View)holder.imageView,"imagetran");
-
-                ActivityOptionsCompat optionsCompat=ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) context,pair1);
-                Bitmaptransfer bitmaptransfer=new Bitmaptransfer();
-                holder.imageView.buildDrawingCache();
-                bitmaptransfer.setBitmap_transfer(holder.imageView.getDrawingCache());
-                context.startActivity(intent,optionsCompat.toBundle());
-
+                Toast.makeText(context,"Click it",Toast.LENGTH_LONG).show();
             }
         });
     }

@@ -12,16 +12,9 @@
     card_view:cardCornerRadius="5dp"
     card_view:cardMaxElevation="5dp">
 
-            <com.zolad.zoominimageview.ZoomInImageView
-                android:id="@+id/imageView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:foregroundGravity="center"
-                android:scaleType="centerCrop"
-                android:adjustViewBounds="true"
-                android:transitionName="imagetran" />
-
-
-
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/imagename"
+        />
 </androidx.cardview.widget.CardView>

@@ -10,7 +10,7 @@ public class Parsejson {
 
     List<String>imagestring;
 
-    public void getstring(String response){
+    public List<String> getstring(String response){
         try{
             JSONObject jsonObject=null;
             jsonObject=new JSONObject(response);
@@ -20,6 +20,7 @@ public class Parsejson {
             e.printStackTrace();
             Log.i("Parsejson",e.getLocalizedMessage());
         }
+        return imagestring;
 
     }
      public List<String> getlist(){

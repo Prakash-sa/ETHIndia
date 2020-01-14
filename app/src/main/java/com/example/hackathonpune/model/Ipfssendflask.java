@@ -8,6 +8,7 @@ import android.util.Log;
 import com.example.hackathonpune.Algorithms.ImageConverter;
 import com.example.hackathonpune.Algorithms.Sizeofbase64;
 import com.example.hackathonpune.Algorithms.StoreImage;
+import com.example.hackathonpune.ConstantsIt;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -23,7 +24,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 public class Ipfssendflask {
-    final String url11="http://172.37.38.153:5002/";
+    final String url11= ConstantsIt.LOCALURL;
 
     private Parsejson parsejson=new Parsejson();
 
