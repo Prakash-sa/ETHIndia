@@ -17,7 +17,7 @@ public class CachedThumbnail {
         else {
             // implement the retrieval process from IPFS
             Bitmap bmp = BitmapFactory.decodeResource(context.getResources(), R.drawable.image);
-            Log.d("", bmp.getByteCount() + "");
+            Log.d("GetCache", bmp.getByteCount() + "");
             return bmp;
         }
     }

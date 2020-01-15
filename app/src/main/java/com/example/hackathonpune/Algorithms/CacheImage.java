@@ -65,4 +65,11 @@ public class CacheImage {
     public void deleteCacheObject() {
         this.file.delete();
     }
+
+    // delete cached thumbnail
+    public void deleteCacheObject(String filename) {
+        File temp = new File(cacheDir, filename);
+        if (temp.exists())
+            temp.delete();
+    }
 }
