@@ -450,8 +450,18 @@ public class DisplayImageActivity extends AppCompatActivity {
         }
 
         @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progressDialog = new ProgressDialog(DisplayImageActivity.this);
+            progressDialog.setMessage("Uploading Image...");
+            progressDialog.show();
+
+        }
+
+        @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
+            progressDialog.dismiss();
             new ImageIPFS().execute();
         }
 
