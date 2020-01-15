@@ -31,7 +31,7 @@ import static com.example.hackathonpune.MainActivity.Database_Path;
 public class Upload {
 
     Ipfssendflask ipfssendflask=new Ipfssendflask();
-    final String url11= ConstantsIt.URL;
+    final String url11= "";
 
     public void upploadimageflask(final String username,String image) {
         final String url1=url11+"jj";
@@ -87,7 +87,7 @@ public class Upload {
     }
 
     public void upploadimagedownload(final Context context,String image) {
-        final String url1=ConstantsIt.URL+"js";
+        final String url1=""+"js";
         final String filepath;
         final String image11=image;
         new Thread(new Runnable() {

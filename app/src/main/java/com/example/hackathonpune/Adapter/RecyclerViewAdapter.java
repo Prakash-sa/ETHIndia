@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.hackathonpune.Algorithms.ImageConverter;
@@ -42,7 +43,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     String username;
 
     public RecyclerViewAdapter(Context context, List<ImageUploadInfo> TempList,String username) {
-
         this.MainImageUploadInfoList = TempList;
         this.context = context;
         this.username=username;
@@ -60,7 +60,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         ImageUploadInfo UploadInfo = MainImageUploadInfoList.get(position);
         final String imagenameis=UploadInfo.getImageName();
         holder.imageNameTextView.setText(imagenameis);
-        holder.imageNameTextView.setOnClickListener(new View.OnClickListener() {
+        holder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Toast.makeText(context,"Click it",Toast.LENGTH_LONG).show();
@@ -78,9 +78,11 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     class ViewHolder extends RecyclerView.ViewHolder{
 
         public TextView imageNameTextView;
+        public CardView cardView;
         public FloatingActionButton floatingActionButton;
         public ViewHolder(View itemView) {
             super(itemView);
+            cardView=itemView.findViewById(R.id.cardview1);
             imageNameTextView=itemView.findViewById(R.id.imagename);
             floatingActionButton=itemView.findViewById(R.id.menudis);
         }
@@ -95,7 +97,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         @Override
         protected Void doInBackground(String... strings) {
             try {
-                URL url = new URL(ConstantsIt.LOCALURL+"js");
+                URL url = new URL(ConstantsIt.LOCALURLGETIMAGE);
                 HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setDoOutput(true);
                 urlConnection.setDoInput(true);
@@ -106,8 +108,8 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
                 try {
                     JSONObject obj = new JSONObject();
-                    obj.put("name" , username);
-                    obj.put("imagename",strings);
+                    obj.put("user" , username);
+                    obj.put("image",strings);
 
                     wr.writeBytes(obj.toString());
                     Log.i("JSON Input", obj.toString());

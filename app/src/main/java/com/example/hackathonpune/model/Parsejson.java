@@ -2,28 +2,25 @@ package com.example.hackathonpune.model;
 
 import android.util.Log;
 
-import org.json.JSONObject;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import java.util.List;
 
 public class Parsejson {
 
     List<String>imagestring;
+    List<String>imagename;
 
     public List<String> getstring(String response){
-        try{
-            JSONObject jsonObject=null;
-            jsonObject=new JSONObject(response);
-            JSONObject timeobject=jsonObject.getJSONObject("");
-            imagestring.add(timeobject.getString("Image"));
-        }catch (Exception e){
-            e.printStackTrace();
-            Log.i("Parsejson",e.getLocalizedMessage());
-        }
-        return imagestring;
+        GsonBuilder gsonBuilder=new GsonBuilder();
+        Gson gson=gsonBuilder.create();
+        ImagesList imagesList=  gson.fromJson(response,ImagesList.class) ;
+        imagestring=imagesList.image_list;
+        imagename.clear();
+        return imagename;
 
     }
-     public List<String> getlist(){
-        return imagestring;
-     }
+
+
 }
