@@ -156,7 +156,7 @@ public class DisplayImageActivity extends AppCompatActivity {
         textView.setVisibility(View.INVISIBLE);
 
         recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(DisplayImageActivity.this));
+        recyclerView.setLayoutManager(new GridLayoutManager(DisplayImageActivity.this,3));
 
 
         (new ImageIPFS()).execute();
@@ -347,6 +347,7 @@ public class DisplayImageActivity extends AppCompatActivity {
                         List<String>imagess=imagesList.getString();
                         for(int i=0;i<imagess.size();i++){
                             String s=imagess.get(i);
+                            if(s.length()<46)continue;
                             String temp="";
                             Integer count=0;
                             for(int j=47;j<s.length();j++){

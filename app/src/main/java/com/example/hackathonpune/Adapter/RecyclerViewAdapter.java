@@ -63,7 +63,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         holder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(context,"Click it",Toast.LENGTH_LONG).show();
+               // Toast.makeText(context,"Click it",Toast.LENGTH_LONG).show();
                 new ImageSave().execute(imagenameis);
             }
         });
@@ -109,7 +109,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                 try {
                     JSONObject obj = new JSONObject();
                     obj.put("user" , username);
-                    obj.put("image",strings);
+                    obj.put("image",strings[0]);
 
                     wr.writeBytes(obj.toString());
                     Log.i("JSON Input", obj.toString());
@@ -144,7 +144,9 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
         @Override
         protected void onPostExecute(Void aVoid) {
+            if(filepath!=null)
             Toast.makeText(context,"File Stored at: "+filepath,Toast.LENGTH_LONG).show();
+            else Toast.makeText(context,"Error in Saveing file ",Toast.LENGTH_LONG).show();
             super.onPostExecute(aVoid);
         }
     }
