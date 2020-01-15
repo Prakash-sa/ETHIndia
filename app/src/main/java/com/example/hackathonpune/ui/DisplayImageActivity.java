@@ -37,6 +37,7 @@ import com.example.hackathonpune.ConstantsIt;
 import com.example.hackathonpune.model.ImageUploadInfo;
 import com.example.hackathonpune.MainActivity;
 import com.example.hackathonpune.R;
+import com.example.hackathonpune.model.ImagesList;
 import com.example.hackathonpune.model.Ipfssendflask;
 import com.example.hackathonpune.model.Parsejson;
 import com.example.hackathonpune.model.Receive;
@@ -50,6 +51,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.gson.Gson;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -75,11 +77,9 @@ public class DisplayImageActivity extends AppCompatActivity {
 
     RecyclerView recyclerView;
 
-    private Ipfssendflask ipfssendflask=new Ipfssendflask();
-
     private String username;
     private String filename;
-    private List<String>imagestring;
+    private List<String>imagestring=new ArrayList<>();
 
     private FirebaseUser user;
     private FirebaseAuth mAuth;
@@ -107,7 +107,6 @@ public class DisplayImageActivity extends AppCompatActivity {
     TextView textView;
     ProgressDialog progressDialog;
     List<ImageUploadInfo> list = new ArrayList<>();
-    List<String>keyofimage=new ArrayList<>();
 
     @Override
     public void onStart() {
@@ -119,6 +118,7 @@ public class DisplayImageActivity extends AppCompatActivity {
         }
         if(currentUser!=null)username=currentUser.getEmail();
     }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -154,10 +154,11 @@ public class DisplayImageActivity extends AppCompatActivity {
         uploadcamera=findViewById(R.id.uploadcamera);
         uploadgallery=findViewById(R.id.uploadgallery);
         uploadvideo=findViewById(R.id.uploadvideo);
-        textView=findViewById(R.id.sizeis);
+        textView=findViewById(R.id.errormessage);
+        textView.setVisibility(View.INVISIBLE);
 
         recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(DisplayImageActivity.this));
+        recyclerView.setLayoutManager(new GridLayoutManager(DisplayImageActivity.this,3));
 
 
         (new ImageIPFS()).execute();
@@ -262,14 +263,15 @@ public class DisplayImageActivity extends AppCompatActivity {
                 cursor.close();
                 bitmap = BitmapFactory.decodeFile(imgDecodableString);
                 String encodedImage = imageConverter.getStringFromBitmap(bitmap);
+
                 try {
                     cacheImage.cacheFromBitmap(bitmap, filename);
                 } catch (IOException e) {
                     e.printStackTrace();
                 } finally {
                     new ImageUploadIPFSandML().execute(encodedImage);
+                    // Log.i("Imagesis",encodedImage);
                 }
-
             }
             if(requestCode==PICK_FROM_CAMERA){
                 Bundle extras = data.getExtras();
@@ -331,7 +333,7 @@ public class DisplayImageActivity extends AppCompatActivity {
         @Override
         protected Void doInBackground(Void... voids) {
             try {
-                URL url = new URL(ConstantsIt.LOCALURL+"js");
+                URL url = new URL(ConstantsIt.LOCALURLGETFILENAME);
                 HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setDoOutput(true);
                 urlConnection.setDoInput(true);
@@ -342,7 +344,7 @@ public class DisplayImageActivity extends AppCompatActivity {
 
                 try {
                     JSONObject obj = new JSONObject();
-                    obj.put("name" , username);
+                    obj.put("user" , username);
 
                     wr.writeBytes(obj.toString());
                     Log.i("JSON Input", obj.toString());
@@ -359,8 +361,28 @@ public class DisplayImageActivity extends AppCompatActivity {
                 if(responseCode == HttpURLConnection.HTTP_OK){
                     String server_response = readStream(urlConnection.getInputStream());
                     Log.i("Response",server_response);
-                    imagestring.clear();
-                    imagestring=parsejson.getstring(server_response);
+                    if(!server_response.equals("No filename for this user")) {
+                       if(!imagestring.isEmpty()) imagestring.clear();
+
+                        Gson gson=new Gson();
+                        ImagesList imagesList=gson.fromJson(server_response,ImagesList.class);
+                        List<String>imagess=imagesList.getString();
+                        for(int i=0;i<imagess.size();i++){
+                            String s=imagess.get(i);
+                            if(s.length()<46)continue;
+                            String temp="";
+                            Integer count=0;
+                            for(int j=47;j<s.length();j++){
+                                if(s.charAt(j)=='.')count++;
+                                if(count.intValue()>=2)break;
+                                temp+=s.charAt(j);
+                            }
+                            imagestring.add(temp);
+                        }
+                        Log.i("imagelist is",imagesList.getString().get(0));
+                        Log.i("name is",imagestring.get(0));
+
+                    }
 
                 }
 
@@ -384,7 +406,12 @@ public class DisplayImageActivity extends AppCompatActivity {
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
 
-            if(imagestring==null)return;
+            if(imagestring.isEmpty()){
+                progressDialog.cancel();
+                textView.setVisibility(View.VISIBLE);
+
+                return;
+            }
 
             ImageUploadInfo imageUploadInfo=null;
             list.clear();
@@ -403,7 +430,7 @@ public class DisplayImageActivity extends AppCompatActivity {
         @Override
         protected Void doInBackground(String... strings) {
             try {
-                URL url = new URL(ConstantsIt.LOCALURL+"jj");
+                URL url = new URL(ConstantsIt.LOCALURLIMAGEUPLOAD);
                 HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setDoOutput(true);
                 urlConnection.setDoInput(true);
@@ -414,9 +441,10 @@ public class DisplayImageActivity extends AppCompatActivity {
 
                 try {
                     JSONObject obj = new JSONObject();
-                    obj.put("name" , username);
-                    obj.put("imagename",filename);
-                    obj.put("image" , strings);
+                    obj.put("user" , username);
+                    obj.put("name",filename);
+                    obj.put("image" , strings[0]);
+                 //   Log.i("imagesis",strings[0]);
 
                     wr.writeBytes(obj.toString());
                     Log.i("JSON Input", obj.toString());
@@ -444,8 +472,18 @@ public class DisplayImageActivity extends AppCompatActivity {
         }
 
         @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progressDialog = new ProgressDialog(DisplayImageActivity.this);
+            progressDialog.setMessage("Uploading Image...");
+            progressDialog.show();
+
+        }
+
+        @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
+            progressDialog.dismiss();
             new ImageIPFS().execute();
         }
 

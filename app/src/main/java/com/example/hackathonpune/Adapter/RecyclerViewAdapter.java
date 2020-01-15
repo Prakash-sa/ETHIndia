@@ -1,6 +1,7 @@
 package com.example.hackathonpune.Adapter;
 
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
@@ -12,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.hackathonpune.Algorithms.ImageConverter;
@@ -19,6 +21,7 @@ import com.example.hackathonpune.Algorithms.StoreImage;
 import com.example.hackathonpune.ConstantsIt;
 import com.example.hackathonpune.model.ImageUploadInfo;
 import com.example.hackathonpune.R;
+import com.example.hackathonpune.ui.DisplayImageActivity;
 import com.github.clans.fab.FloatingActionButton;
 
 import org.json.JSONException;
@@ -38,11 +41,11 @@ import java.util.List;
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder> {
 
     Context context;
+    ProgressDialog progressDialog;
     List<ImageUploadInfo> MainImageUploadInfoList;
     String username;
 
     public RecyclerViewAdapter(Context context, List<ImageUploadInfo> TempList,String username) {
-
         this.MainImageUploadInfoList = TempList;
         this.context = context;
         this.username=username;
@@ -60,10 +63,10 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         ImageUploadInfo UploadInfo = MainImageUploadInfoList.get(position);
         final String imagenameis=UploadInfo.getImageName();
         holder.imageNameTextView.setText(imagenameis);
-        holder.imageNameTextView.setOnClickListener(new View.OnClickListener() {
+        holder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(context,"Click it",Toast.LENGTH_LONG).show();
+               // Toast.makeText(context,"Click it",Toast.LENGTH_LONG).show();
                 new ImageSave().execute(imagenameis);
             }
         });
@@ -78,9 +81,11 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     class ViewHolder extends RecyclerView.ViewHolder{
 
         public TextView imageNameTextView;
+        public CardView cardView;
         public FloatingActionButton floatingActionButton;
         public ViewHolder(View itemView) {
             super(itemView);
+            cardView=itemView.findViewById(R.id.cardview1);
             imageNameTextView=itemView.findViewById(R.id.imagename);
             floatingActionButton=itemView.findViewById(R.id.menudis);
         }
@@ -95,7 +100,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         @Override
         protected Void doInBackground(String... strings) {
             try {
-                URL url = new URL(ConstantsIt.LOCALURL+"js");
+                URL url = new URL(ConstantsIt.LOCALURLGETIMAGE);
                 HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setDoOutput(true);
                 urlConnection.setDoInput(true);
@@ -106,8 +111,8 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
                 try {
                     JSONObject obj = new JSONObject();
-                    obj.put("name" , username);
-                    obj.put("imagename",strings);
+                    obj.put("user" , username);
+                    obj.put("image",strings[0]);
 
                     wr.writeBytes(obj.toString());
                     Log.i("JSON Input", obj.toString());
@@ -141,8 +146,82 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         }
 
         @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progressDialog = new ProgressDialog(context);
+            progressDialog.setMessage("Downloading...");
+            progressDialog.show();
+        }
+
+        @Override
         protected void onPostExecute(Void aVoid) {
+            if(filepath!=null)
             Toast.makeText(context,"File Stored at: "+filepath,Toast.LENGTH_LONG).show();
+            else Toast.makeText(context,"Error in Saveing file ",Toast.LENGTH_LONG).show();
+            progressDialog.dismiss();
+            super.onPostExecute(aVoid);
+        }
+    }
+
+    private class DeleteImage extends AsyncTask<String,Void,Void>{
+
+        String filepath;
+
+        @Override
+        protected Void doInBackground(String... strings) {
+            try {
+                URL url = new URL(ConstantsIt.LOCALURLGETIMAGE);
+                HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+                urlConnection.setDoOutput(true);
+                urlConnection.setDoInput(true);
+                urlConnection.setRequestMethod("POST");
+                OutputStream os=urlConnection.getOutputStream();
+
+                DataOutputStream wr = new DataOutputStream(os);
+
+                try {
+                    JSONObject obj = new JSONObject();
+                    obj.put("user" , username);
+                    obj.put("image",strings[0]);
+
+                    wr.writeBytes(obj.toString());
+                    Log.i("JSON Input", obj.toString());
+                    wr.flush();
+                    wr.close();
+                    os.close();
+                } catch (JSONException ex) {
+                    ex.printStackTrace();
+                }
+
+                int responseCode = urlConnection.getResponseCode();
+                Log.i("RsponseCode", "is "+responseCode);
+
+                if(responseCode == HttpURLConnection.HTTP_OK){
+                    String server_response = readStream(urlConnection.getInputStream());
+                    Log.i("Response",server_response);
+                }
+
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progressDialog = new ProgressDialog(context);
+            progressDialog.setMessage("Removing...");
+            progressDialog.show();
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            Toast.makeText(context,"Error in Saveing file ",Toast.LENGTH_LONG).show();
+            progressDialog.dismiss();
             super.onPostExecute(aVoid);
         }
     }

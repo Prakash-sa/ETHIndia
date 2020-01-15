@@ -6,23 +6,30 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.DisplayImageActivity">
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/errormessage"
+        android:gravity="center"
+        android:textSize="20dp"
+        android:fontFamily="monospace"
+        android:layout_centerInParent="true"
+        android:text="No images uploaded"/>
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:id="@+id/recyclerView"
-        android:layout_margin="1dp"
+        android:layout_margin="0dp"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true">
 
 
     </androidx.recyclerview.widget.RecyclerView>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        >
 
-    </LinearLayout>
     <com.github.clans.fab.FloatingActionMenu
         android:id="@+id/menudis"
         android:layout_width="wrap_content"
@@ -87,18 +94,7 @@
             fab:fab_size="mini" />
 
     </com.github.clans.fab.FloatingActionMenu>
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/sizeis"
-        android:gravity="center_vertical|center_horizontal"
-        android:foregroundGravity="bottom"
-        android:layout_alignParentBottom="true"
-        android:layout_margin="20dp"
-        android:textSize="20dp"
-        android:textColor="@color/colorPrimary"
-        android:fontFamily="sans-serif-medium"
-        />
+
 
 
 

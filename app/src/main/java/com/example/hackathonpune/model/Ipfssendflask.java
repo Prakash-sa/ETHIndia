@@ -24,7 +24,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 public class Ipfssendflask {
-    final String url11= ConstantsIt.LOCALURL;
+    final String url11= "http://172.37.38.153:5000/";
 
     private Parsejson parsejson=new Parsejson();
 
