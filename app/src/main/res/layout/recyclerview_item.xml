@@ -15,14 +15,21 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         >
+
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:src="@mipmap/ic_launcher"
             android:id="@+id/imageviewrecycler"/>
 
-        <TextView
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            >
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
             android:id="@+id/imagename"
             android:text="ImageName"
             android:textSize="5dp"
@@ -33,7 +40,15 @@
             android:paddingLeft="30dp"
             />
 
+        <Toolbar
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+
+            android:id="@+id/cardtoolbar"/>
+
+        </LinearLayout>
     </LinearLayout>
+
 
 
 </androidx.cardview.widget.CardView>

@@ -7,15 +7,15 @@
     android:textColor="#ffffff"
     >
     <item
-        android:id="@+id/action_signout"
+        android:id="@+id/action_download"
         android:orderInCategory="100"
-        android:title="SignOut"
-        app:showAsAction="never" />
-    <item
-        android:id="@+id/action_video_call"
-        android:orderInCategory="100"
-        android:title="Video Broadcast"
+        android:title="Download"
         app:showAsAction="never" />
 
+    <item
+        android:id="@+id/action_delete"
+        android:orderInCategory="100"
+        android:title="Delete"
+        app:showAsAction="never" />
 
 </menu>

@@ -17,7 +17,6 @@ public class StoreImage {
 
     public String storeImage(final Context context,Bitmap image) throws IOException {
 
-
         File pictureFile = createImageFile();
         if (pictureFile == null) {
             Log.i("Error", "Error creating media file, check storage permissions: ");
@@ -35,8 +34,6 @@ public class StoreImage {
             filepathis.setFilepath(pictureFile.toString());
             fos.flush();
             fos.close();
-
-
 
         } catch (FileNotFoundException e) {
             Log.i("Error", "File not found: " + e.getMessage());

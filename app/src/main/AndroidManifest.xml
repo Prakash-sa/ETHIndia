@@ -2,10 +2,19 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.hackathonpune">
 
-    <uses-feature android:name="android.hardware.camera" android:required="true" />
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="true" />
+
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
 
     <application
         android:allowBackup="true"
@@ -15,7 +24,11 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".ui.Signinup" android:theme="@style/NoActionbar"></activity>
+        <activity android:name=".ui.RecoveryImage"></activity>
+        <activity android:name=".ui.VideoActivity" />
+        <activity
+            android:name=".ui.Signinup"
+            android:theme="@style/NoActionbar" />
         <activity
             android:name=".ui.Splashactivity"
             android:theme="@style/NoActionbar">
@@ -29,10 +42,10 @@
         <activity
             android:name=".ui.ViewImage"
             android:parentActivityName=".ui.DisplayImageActivity"
-            android:theme="@style/NoActionbar" />
+            android:theme="@style/FullScreenVideoTheme" />
         <activity
             android:name=".MainActivity"
-            android:theme="@style/NoActionbar"></activity>
+            android:theme="@style/NoActionbar" />
 
         <meta-data
             android:name="preloaded_fonts"

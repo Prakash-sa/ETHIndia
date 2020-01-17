@@ -7,12 +7,16 @@ import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.Toolbar;
 
+import androidx.appcompat.widget.PopupMenu;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -62,14 +66,27 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     public void onBindViewHolder(final ViewHolder holder, final int position) {
         ImageUploadInfo UploadInfo = MainImageUploadInfoList.get(position);
         final String imagenameis=UploadInfo.getImageName();
-        holder.imageNameTextView.setText(imagenameis);
-        holder.cardView.setOnClickListener(new View.OnClickListener() {
+        holder.toolbar.inflateMenu(R.menu.image_menu);
+        holder.toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
-            public void onClick(View v) {
-               // Toast.makeText(context,"Click it",Toast.LENGTH_LONG).show();
-                new ImageSave().execute(imagenameis);
+            public boolean onMenuItemClick(MenuItem item) {
+                int id2=item.getItemId();
+                Log.i("Clickit",id2+" "+R.id.action_download);
+
+                if(id2==R.id.action_download){
+                    new ImageSave().execute(imagenameis);
+                }
+                if(id2==R.id.action_delete){
+                    new DeleteImage().execute(imagenameis);
+                    holder.cardView.setVisibility(View.GONE);
+                   // DisplayImageActivity.(new ImageIPFS().execute());
+                }
+
+                return false;
             }
         });
+        holder.imageNameTextView.setText(imagenameis);
+
     }
 
     @Override
@@ -82,12 +99,16 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
         public TextView imageNameTextView;
         public CardView cardView;
+        public Toolbar toolbar;
         public FloatingActionButton floatingActionButton;
         public ViewHolder(View itemView) {
             super(itemView);
+            toolbar=itemView.findViewById(R.id.cardtoolbar);
             cardView=itemView.findViewById(R.id.cardview1);
             imageNameTextView=itemView.findViewById(R.id.imagename);
             floatingActionButton=itemView.findViewById(R.id.menudis);
+
+
         }
 
 
@@ -170,7 +191,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         @Override
         protected Void doInBackground(String... strings) {
             try {
-                URL url = new URL(ConstantsIt.LOCALURLGETIMAGE);
+                URL url = new URL(ConstantsIt.LOCALURLDELETEIMAGE);
                 HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setDoOutput(true);
                 urlConnection.setDoInput(true);
@@ -220,11 +241,12 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
         @Override
         protected void onPostExecute(Void aVoid) {
-            Toast.makeText(context,"Error in Saveing file ",Toast.LENGTH_LONG).show();
+            Toast.makeText(context,"Deteled file",Toast.LENGTH_LONG).show();
             progressDialog.dismiss();
             super.onPostExecute(aVoid);
         }
     }
+
 
     public static String readStream(InputStream in) {
         BufferedReader reader = null;

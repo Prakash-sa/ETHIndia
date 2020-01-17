@@ -7,6 +7,7 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.Manifest;
 import android.app.Activity;
@@ -21,6 +22,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Menu;
@@ -58,6 +60,7 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -73,6 +76,8 @@ import static android.icu.util.ULocale.getName;
 public class DisplayImageActivity extends AppCompatActivity {
 
     DatabaseReference databaseReference;
+
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     RecyclerView recyclerView;
 
@@ -253,12 +258,23 @@ public class DisplayImageActivity extends AppCompatActivity {
                 String[] filePathColumn = {MediaStore.Images.Media.DATA};
                 File file= new File(selectedImage.getPath());
                 filename=file.getName();
+
                 Cursor cursor = getContentResolver().query(selectedImage, filePathColumn, null, null, null);
                 cursor.moveToFirst();
                 int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
                 String imgDecodableString = cursor.getString(columnIndex);
+                String[] tmp=imgDecodableString.split("/");
+                filename=tmp[tmp.length - 1];
                 cursor.close();
                 bitmap = BitmapFactory.decodeFile(imgDecodableString);
+
+                try {
+                    FileOutputStream out = new FileOutputStream(imgDecodableString);
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
+                    out.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 String encodedImage = imageConverter.getStringFromBitmap(bitmap);
                // Log.i("Imagesis",encodedImage);
                 new ImageUploadIPFSandML().execute(encodedImage);
@@ -300,16 +316,19 @@ public class DisplayImageActivity extends AppCompatActivity {
             startActivity(new Intent(DisplayImageActivity.this,Signinup.class));
             finish();
         }
+        if(id1==R.id.action_video_call){
+            startActivity(new Intent(DisplayImageActivity.this,VideoActivity.class));
+        }
 
         return super.onOptionsItemSelected(item);
 
     }
 
 
-    private class ImageIPFS  extends AsyncTask<Void,Void,Void>{
+    public class ImageIPFS  extends AsyncTask<String,Void,Void>{
 
         @Override
-        protected Void doInBackground(Void... voids) {
+        protected Void doInBackground(String... strings) {
             try {
                 URL url = new URL(ConstantsIt.LOCALURLGETFILENAME);
                 HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
@@ -340,7 +359,7 @@ public class DisplayImageActivity extends AppCompatActivity {
                     String server_response = readStream(urlConnection.getInputStream());
                     Log.i("Response",server_response);
                     if(!server_response.equals("No filename for this user")) {
-                       if(!imagestring.isEmpty()) imagestring.clear();
+                        if(!imagestring.isEmpty()) imagestring.clear();
 
                         Gson gson=new Gson();
                         ImagesList imagesList=gson.fromJson(server_response,ImagesList.class);
@@ -405,8 +424,16 @@ public class DisplayImageActivity extends AppCompatActivity {
     }
 
     private class ImageUploadIPFSandML extends AsyncTask<String,Void,Void>{
+        boolean filenameexist;
         @Override
         protected Void doInBackground(String... strings) {
+            boolean isthere=imagestring.contains(filename);
+            if(isthere){
+                filenameexist=true;
+                return null;
+            }
+            filenameexist=false;
+
             try {
                 URL url = new URL(ConstantsIt.LOCALURLIMAGEUPLOAD);
                 HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
@@ -462,6 +489,8 @@ public class DisplayImageActivity extends AppCompatActivity {
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
             progressDialog.dismiss();
+            if(filenameexist)
+                Toast.makeText(DisplayImageActivity.this,"Cannot Upload Same Images",Toast.LENGTH_LONG).show();
             new ImageIPFS().execute();
         }
 

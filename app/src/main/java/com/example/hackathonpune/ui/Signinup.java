@@ -45,6 +45,7 @@ public class Signinup extends AppCompatActivity {
                 String passwordstr=password.getText().toString();
                 if(!emailstr.isEmpty()&&!passwordstr.isEmpty()){
                     loginsignin(emailstr,passwordstr);
+                    loginbt.setEnabled(false);
                 }
                 else {
                     Toast.makeText(Signinup.this,"Feel Details",Toast.LENGTH_LONG).show();
@@ -58,6 +59,7 @@ public class Signinup extends AppCompatActivity {
                 String passwordstr=password.getText().toString();
                 if(!emailstr.isEmpty()&&!passwordstr.isEmpty()){
                     createsignitfinal(emailstr,passwordstr);
+                    createuser.setEnabled(false);
                 }
                 else {
                     Toast.makeText(Signinup.this,"Feel Details",Toast.LENGTH_LONG).show();
