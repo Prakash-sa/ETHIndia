@@ -5,7 +5,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
@@ -22,7 +21,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.provider.MediaStore;
 import android.util.Base64;
 import android.util.Log;
@@ -39,10 +37,8 @@ import com.example.hackathonpune.Algorithms.ImageConverter;
 import com.example.hackathonpune.Algorithms.StoreImage;
 import com.example.hackathonpune.ConstantsIt;
 import com.example.hackathonpune.model.ImageUploadInfo;
-import com.example.hackathonpune.MainActivity;
 import com.example.hackathonpune.R;
 import com.example.hackathonpune.model.ImagesList;
-import com.example.hackathonpune.model.Ipfssendflask;
 import com.example.hackathonpune.model.Parsejson;
 import com.example.hackathonpune.model.Receive;
 import com.example.hackathonpune.Adapter.RecyclerViewAdapter;
@@ -50,11 +46,7 @@ import com.example.hackathonpune.model.Upload;
 import com.github.clans.fab.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 
 import org.json.JSONException;
@@ -135,7 +127,6 @@ public class DisplayImageActivity extends AppCompatActivity {
         setContentView(R.layout.activity_display_image);
         setTitle("DiskSpace");
 
-        // Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
         user = FirebaseAuth.getInstance().getCurrentUser();
 
@@ -206,7 +197,7 @@ public class DisplayImageActivity extends AppCompatActivity {
         });
 
         // initialise cacheObject
-        cacheImage = new CacheImage(DisplayImageActivity.this);
+      //  cacheImage = new CacheImage(DisplayImageActivity.this);
 
     }
 
@@ -617,12 +608,13 @@ public class DisplayImageActivity extends AppCompatActivity {
             filenameexist=false;
 
             try {
-                URL url = new URL(ConstantsIt.LOCALURLSENDVIDEO);
+                URL url = new URL(ConstantsIt.LOCALURLDOWNLOAD);
                 HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setDoOutput(true);
                 urlConnection.setDoInput(true);
                 urlConnection.setRequestMethod("POST");
                 OutputStream os=urlConnection.getOutputStream();
+                Log.i("url",ConstantsIt.LOCALURLDOWNLOAD);
 
                 DataOutputStream wr = new DataOutputStream(os);
 

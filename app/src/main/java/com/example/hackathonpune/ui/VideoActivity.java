@@ -7,11 +7,7 @@ import androidx.core.content.ContextCompat;
 
 import android.Manifest;
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -28,13 +24,13 @@ import android.widget.Toast;
 
 import com.example.hackathonpune.ConstantsIt;
 import com.example.hackathonpune.R;
+import com.github.clans.fab.FloatingActionButton;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -66,6 +62,7 @@ public class VideoActivity extends AppCompatActivity {
     private String channel_name;
     private Integer flag=1;
     private String username;
+    private FloatingActionButton start_recording;
 
     private FrameLayout mLocalContainer;
     private RelativeLayout mRemoteContainer;
@@ -147,6 +144,8 @@ public class VideoActivity extends AppCompatActivity {
         setContentView(R.layout.activity_video);
 
         username=getIntent().getStringExtra("Username");
+        start_recording=findViewById(R.id.fab_start_recording);
+
         initUI();
 
         if (checkSelfPermission(REQUESTED_PERMISSIONS[0], PERMISSION_REQ_ID) &&
@@ -156,6 +155,14 @@ public class VideoActivity extends AppCompatActivity {
 
         }
         startit();
+
+        start_recording.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new VideoStartIPFSandML().execute();
+            }
+        });
+
     }
 
     private void startit() {
@@ -164,7 +171,6 @@ public class VideoActivity extends AppCompatActivity {
         }catch (Exception e){
             Log.i("Exception",e.toString());
         }
-
     }
 
     public void showChangeLangDialog() {
@@ -196,7 +202,8 @@ public class VideoActivity extends AppCompatActivity {
         cancel_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                b.cancel();
+                finish();
             }
         });
         flag=1;
@@ -217,7 +224,6 @@ public class VideoActivity extends AppCompatActivity {
             ActivityCompat.requestPermissions(this, REQUESTED_PERMISSIONS, requestCode);
             return false;
         }
-
         return true;
     }
 
@@ -358,13 +364,12 @@ public class VideoActivity extends AppCompatActivity {
         mSwitchCameraBtn.setVisibility(visibility);
     }
 
-    private class ImageUploadIPFSandML extends AsyncTask<String,Void,Void> {
-        boolean filenameexist;
+    private class VideoStartIPFSandML extends AsyncTask<String,Void,Void> {
         @Override
         protected Void doInBackground(String... strings) {
 
             try {
-                URL url = new URL(ConstantsIt.LOCALURLIMAGEUPLOAD);
+                URL url = new URL(ConstantsIt.LOCALURLSTARTVIDEORECORD);
                 HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setDoOutput(true);
                 urlConnection.setDoInput(true);
@@ -375,8 +380,8 @@ public class VideoActivity extends AppCompatActivity {
 
                 try {
                     JSONObject obj = new JSONObject();
-                    obj.put("user" , username);
-                    obj.put("channel",channel_name);
+                    obj.put("user",username);
+                    obj.put("channel_name",channel_name);
                     //   Log.i("imagesis",strings[0]);
 
                     wr.writeBytes(obj.toString());
@@ -404,14 +409,11 @@ public class VideoActivity extends AppCompatActivity {
             return null;
         }
 
-
-
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
             Toast.makeText(VideoActivity.this,"Recording Started",Toast.LENGTH_LONG).show();
         }
-
     }
 
 
