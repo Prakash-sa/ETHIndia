@@ -29,6 +29,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -110,6 +111,7 @@ public class DisplayImageActivity extends AppCompatActivity {
     FloatingActionButton uploadcamera,uploadgallery,uploadvideo;
     RecyclerView.Adapter adapter ;
     TextView textView;
+    private Button bt_refresh;
     ProgressDialog progressDialog;
     List<ImageUploadInfo> list = new ArrayList<>();
 
@@ -160,10 +162,12 @@ public class DisplayImageActivity extends AppCompatActivity {
         uploadgallery=findViewById(R.id.uploadgallery);
         uploadvideo=findViewById(R.id.uploadvideo);
         textView=findViewById(R.id.errormessage);
+        bt_refresh=findViewById(R.id.action_refresh);
         textView.setVisibility(View.INVISIBLE);
 
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new GridLayoutManager(DisplayImageActivity.this,3));
+
 
 
         (new ImageIPFS()).execute();
@@ -279,15 +283,17 @@ public class DisplayImageActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
                 String encodedImage = imageConverter.getStringFromBitmap(bitmap);
+                new ImageUploadIPFSandML().execute(encodedImage);
 
-                try {
-                    cacheImage.cacheFromBitmap(bitmap, filename);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } finally {
-                    new ImageUploadIPFSandML().execute(encodedImage);
-                    // Log.i("Imagesis",encodedImage);
-                }
+//
+//                try {
+//                    cacheImage.cacheFromBitmap(bitmap, filename);
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                } finally {
+//                    new ImageUploadIPFSandML().execute(encodedImage);
+//                    // Log.i("Imagesis",encodedImage);
+//                }
             }
             if(requestCode==PICK_FROM_CAMERA){
                 Bundle extras = data.getExtras();
@@ -342,6 +348,7 @@ public class DisplayImageActivity extends AppCompatActivity {
         if(id1==R.id.action_video_call){
             startActivity(new Intent(DisplayImageActivity.this,VideoActivity.class));
         }
+        if(id1==R.id.action_refresh)(new ImageIPFS()).execute();
 
         return super.onOptionsItemSelected(item);
 

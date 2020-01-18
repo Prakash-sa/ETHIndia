@@ -6,6 +6,11 @@
     android:colorBackground="@color/colorPrimary"
     android:textColor="#ffffff"
     >
+    <item android:id="@+id/action_refresh"
+        android:orderInCategory="100"
+        app:showAsAction="always"
+        android:icon="@drawable/ic_refresh_black_24dp"
+        android:title="Refresh"/>
     <item
         android:id="@+id/action_signout"
         android:orderInCategory="100"

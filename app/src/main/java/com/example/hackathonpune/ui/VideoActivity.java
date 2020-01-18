@@ -33,9 +33,6 @@ public class VideoActivity extends AppCompatActivity {
 
     private static final int PERMISSION_REQ_ID = 22;
 
-    // Permission WRITE_EXTERNAL_STORAGE is not mandatory
-    // for Agora RTC SDK, just in case if you wanna save
-    // logs to external sdcard.
     private static final String[] REQUESTED_PERMISSIONS = new String[]{
             Manifest.permission.RECORD_AUDIO,
             Manifest.permission.CAMERA,
@@ -157,7 +154,6 @@ public class VideoActivity extends AppCompatActivity {
 
         final EditText edt = (EditText) dialogView.findViewById(R.id.dialog_edittext);
 
-        dialogBuilder.setTitle("Video Conferrence");
         dialogBuilder.setMessage("Please Enter Channel Name");
         dialogBuilder.setPositiveButton("Done", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {

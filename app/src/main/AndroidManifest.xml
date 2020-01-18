@@ -25,7 +25,7 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
         <activity android:name=".ui.RecoveryImage"></activity>
-        <activity android:name=".ui.VideoActivity" />
+        <activity android:name=".ui.VideoActivity" android:theme="@style/FullScreenVideoTheme"/>
         <activity
             android:name=".ui.Signinup"
             android:theme="@style/NoActionbar" />

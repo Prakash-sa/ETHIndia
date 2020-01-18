@@ -10,45 +10,42 @@
     card_view:cardElevation="5dp"
     card_view:cardCornerRadius="5dp"
     card_view:cardMaxElevation="5dp">
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        >
 
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:src="@mipmap/ic_launcher"
-            android:id="@+id/imageviewrecycler"/>
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
             >
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:id="@+id/imagename"
-            android:text="ImageName"
-            android:textSize="5dp"
-            android:textStyle="bold"
-            android:fontFamily="monospace"
-            android:paddingTop="10dp"
-            android:paddingBottom="5dp"
-            android:paddingLeft="30dp"
-            />
 
-        <Toolbar
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@mipmap/ic_launcher"
+                android:id="@+id/imageviewrecycler"/>
 
-            android:id="@+id/cardtoolbar"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                >
+                <TextView
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/imagename"
+                    android:text="ImageName"
+                    android:textSize="5dp"
+                    android:textStyle="bold"
+                    android:fontFamily="monospace"
+                    android:paddingTop="10dp"
+                    android:paddingBottom="5dp"
+                    android:paddingLeft="30dp"
+                    />
 
+
+            </LinearLayout>
         </LinearLayout>
-    </LinearLayout>
-
 
 
 </androidx.cardview.widget.CardView>

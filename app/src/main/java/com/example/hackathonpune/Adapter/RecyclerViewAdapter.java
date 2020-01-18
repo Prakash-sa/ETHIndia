@@ -11,6 +11,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -66,25 +67,56 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     public void onBindViewHolder(final ViewHolder holder, final int position) {
         ImageUploadInfo UploadInfo = MainImageUploadInfoList.get(position);
         final String imagenameis=UploadInfo.getImageName();
-        holder.toolbar.inflateMenu(R.menu.image_menu);
-        holder.toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+        holder.cardView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                int id2=item.getItemId();
-                Log.i("Clickit",id2+" "+R.id.action_download);
+            public boolean onLongClick(View v) {
+                Log.i("CardView","True");
+                PopupMenu popupMenu=new PopupMenu(context,v);
+                popupMenu.inflate(R.menu.image_menu);
+                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        int id2=item.getItemId();
 
-                if(id2==R.id.action_download){
-                    new ImageSave().execute(imagenameis);
-                }
-                if(id2==R.id.action_delete){
-                    new DeleteImage().execute(imagenameis);
-                    holder.cardView.setVisibility(View.GONE);
-                   // DisplayImageActivity.(new ImageIPFS().execute());
-                }
-
+                        if(id2==R.id.action_download){
+                            new ImageSave().execute(imagenameis);
+                        }
+                        if(id2==R.id.action_delete){
+                            new DeleteImage().execute(imagenameis);
+                            holder.cardView.setVisibility(View.GONE);
+                        }
+                        return false;
+                    }
+                });
+                popupMenu.show();
                 return false;
             }
         });
+        holder.cardView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.i("CardView","True");
+                PopupMenu popupMenu=new PopupMenu(context,v);
+                popupMenu.inflate(R.menu.image_menu);
+                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        int id2=item.getItemId();
+
+                        if(id2==R.id.action_download){
+                            new ImageSave().execute(imagenameis);
+                        }
+                        if(id2==R.id.action_delete){
+                            new DeleteImage().execute(imagenameis);
+                            holder.cardView.setVisibility(View.GONE);
+                        }
+                        return false;
+                    }
+                });
+                popupMenu.show();
+            }
+        });
+
         holder.imageNameTextView.setText(imagenameis);
 
     }
@@ -95,22 +127,19 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         return MainImageUploadInfoList.size();
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder{
+    class ViewHolder extends RecyclerView.ViewHolder {
 
         public TextView imageNameTextView;
         public CardView cardView;
-        public Toolbar toolbar;
         public FloatingActionButton floatingActionButton;
         public ViewHolder(View itemView) {
             super(itemView);
-            toolbar=itemView.findViewById(R.id.cardtoolbar);
             cardView=itemView.findViewById(R.id.cardview1);
             imageNameTextView=itemView.findViewById(R.id.imagename);
             floatingActionButton=itemView.findViewById(R.id.menudis);
 
 
         }
-
 
     }
 
