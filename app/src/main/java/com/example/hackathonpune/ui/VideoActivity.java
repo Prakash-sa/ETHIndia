@@ -382,7 +382,6 @@ public class VideoActivity extends AppCompatActivity {
                     JSONObject obj = new JSONObject();
                     obj.put("user",username);
                     obj.put("channel_name",channel_name);
-                    //   Log.i("imagesis",strings[0]);
 
                     wr.writeBytes(obj.toString());
                     Log.i("JSON Input", obj.toString());
@@ -415,6 +414,8 @@ public class VideoActivity extends AppCompatActivity {
             Toast.makeText(VideoActivity.this,"Recording Started",Toast.LENGTH_LONG).show();
         }
     }
+
+
 
 
     public static String readStream(InputStream in) {

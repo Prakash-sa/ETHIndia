@@ -327,13 +327,13 @@ public class DisplayImageActivity extends AppCompatActivity {
         int id1=item.getItemId();
         if(id1==R.id.action_signout){
             mAuth.signOut();
-            Intent videointent=new Intent(DisplayImageActivity.this,Signinup.class);
-            videointent.putExtra("Username",username);
-            startActivity(videointent);
+            startActivity(new Intent(DisplayImageActivity.this,Signinup.class));
             finish();
         }
         if(id1==R.id.action_video_call){
-            startActivity(new Intent(DisplayImageActivity.this,VideoActivity.class));
+            Intent videointent=new Intent(DisplayImageActivity.this,VideoActivity.class);
+            videointent.putExtra("Username",username);
+            startActivity(videointent);
         }
         if(id1==R.id.action_refresh)(new ImageIPFS()).execute();
 
@@ -379,6 +379,7 @@ public class DisplayImageActivity extends AppCompatActivity {
                         Gson gson=new Gson();
                         ImagesList imagesList=gson.fromJson(server_response,ImagesList.class);
                         List<String>imagess=imagesList.getString();
+
                         for(int i=0;i<imagess.size();i++){
                             String s=imagess.get(i);
                             if(s.length()<46)continue;
@@ -391,9 +392,10 @@ public class DisplayImageActivity extends AppCompatActivity {
                             }
                             imagestring.add(temp);
                         }
-                        Log.i("imagelist is",imagesList.getString().get(0));
-                        Log.i("name is",imagestring.get(0));
-
+                        if(imagestring.size()>0) {
+                            Log.i("imagelist is", imagesList.getString().get(0));
+                            Log.i("name is", imagestring.get(0));
+                        }
                     }
 
                 }

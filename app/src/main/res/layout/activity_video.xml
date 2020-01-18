@@ -143,14 +143,6 @@ tools:context=".ui.VideoActivity">
             fab:fab_label="Start Recording"
             fab:fab_size="mini" />
 
-        <com.github.clans.fab.FloatingActionButton
-            android:id="@+id/fab_stop_recording"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_camera_alt_black_24dp"
-            fab:fab_label="Stop Recording"
-            fab:fab_size="mini" />
-
     </com.github.clans.fab.FloatingActionMenu>
 
 </RelativeLayout>

@@ -80,7 +80,10 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
                         if(id2==R.id.action_download){
 
-
+                            if(imagenameis.charAt(imagenameis.length()-1)=='4'){
+                                new VideoSaveAsync().execute(imagenameis);
+                            }
+                            else
                                 new ImageSave().execute(imagenameis);
 
                         }
@@ -106,7 +109,15 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                         int id2=item.getItemId();
 
                         if(id2==R.id.action_download){
-                             new ImageSave().execute(imagenameis);
+                            if(imagenameis.charAt(imagenameis.length()-1)=='4'){
+                                new VideoSaveAsync().execute(imagenameis);
+                                Log.i("Click on","Video");
+                            }
+                            else{
+                                Log.i("Click on","Image");
+                                new ImageSave().execute(imagenameis);
+                            }
+
                         }
                         if(id2==R.id.action_delete){
                             new DeleteImage().execute(imagenameis);
@@ -287,7 +298,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         @Override
         protected Void doInBackground(String... strings) {
             try {
-                URL url = new URL(ConstantsIt.LOCALURLRECEIVEVIDEO);
+                URL url = new URL(ConstantsIt.LOCALURLDOWNLOAD);
 
                 HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setDoOutput(true);
@@ -300,7 +311,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                 try {
                     JSONObject obj = new JSONObject();
                     obj.put("user" , username);
-                    obj.put("image",strings[0]);
+                    obj.put("name",strings[0]);
 
 
                     wr.writeBytes(obj.toString());
