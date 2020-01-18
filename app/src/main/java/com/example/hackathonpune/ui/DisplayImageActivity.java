@@ -310,7 +310,6 @@ public class DisplayImageActivity extends AppCompatActivity {
                 imageConverter.getStringFromBitmap(thumb);
                 Log.i("VideoString ",baseVideo);
                 new VideoUploadIPFSandML().execute(baseVideo);
-
             }
         }
     }

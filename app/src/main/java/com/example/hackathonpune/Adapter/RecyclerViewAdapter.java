@@ -80,11 +80,15 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
                         if(id2==R.id.action_download){
 
-                            if(imagenameis.charAt(imagenameis.length()-1)=='4'){
-                                new VideoSaveAsync().execute(imagenameis);
+                            String imagenameisfi = imagenameis.replaceAll("\n", "");
+                            if(imagenameisfi.charAt(imagenameisfi.length()-1)=='4'){
+                                new VideoSaveAsync().execute(imagenameisfi);
+                                Log.i("Click on","Video");
                             }
-                            else
-                                new ImageSave().execute(imagenameis);
+                            else{
+                                Log.i("Click on","Image");
+                                new ImageSave().execute(imagenameisfi);
+                            }
 
                         }
                         if(id2==R.id.action_delete){
@@ -109,13 +113,15 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                         int id2=item.getItemId();
 
                         if(id2==R.id.action_download){
-                            if(imagenameis.charAt(imagenameis.length()-1)=='4'){
-                                new VideoSaveAsync().execute(imagenameis);
+
+                            String imagenameisfi = imagenameis.replaceAll("\n", "");
+                            if(imagenameisfi.charAt(imagenameisfi.length()-1)=='4'){
+                                new VideoSaveAsync().execute(imagenameisfi);
                                 Log.i("Click on","Video");
                             }
                             else{
                                 Log.i("Click on","Image");
-                                new ImageSave().execute(imagenameis);
+                                new ImageSave().execute(imagenameisfi);
                             }
 
                         }
