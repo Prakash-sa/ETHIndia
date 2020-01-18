@@ -47,7 +47,7 @@ public class StoreImage {
     }
 
 
-    public String saveVideo(String s){
+    public String saveVideo(Context context,String s){
 
         File file=createVideoFile();
         byte[] decodedBytes = Base64.decode(s.getBytes(),1);

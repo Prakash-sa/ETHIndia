@@ -24,6 +24,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
+import android.util.Base64;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -62,6 +63,7 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -273,17 +275,8 @@ public class DisplayImageActivity extends AppCompatActivity {
                 String[] tmp=imgDecodableString.split("/");
                 filename=tmp[tmp.length - 1];
                 cursor.close();
-                bitmap = BitmapFactory.decodeFile(imgDecodableString);
 
-                try {
-                    FileOutputStream out = new FileOutputStream(imgDecodableString);
-                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
-                    out.close();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                String encodedImage = imageConverter.getStringFromBitmap(bitmap);
-                new ImageUploadIPFSandML().execute(encodedImage);
+                new ImageUploadIPFSandML().execute(imgDecodableString);
 
 //
 //                try {
@@ -298,14 +291,16 @@ public class DisplayImageActivity extends AppCompatActivity {
             if(requestCode==PICK_FROM_CAMERA){
                 Bundle extras = data.getExtras();
                 Bitmap imageBitmap = (Bitmap) extras.get("data");
-                String encodedImage = imageConverter.getStringFromBitmap(imageBitmap);
+                String filepath= null;
                 try {
-                    cacheImage.cacheFromBitmap(bitmap, filename);
+                    filepath = (new StoreImage()).storeImage(DisplayImageActivity.this,imageBitmap);
                 } catch (IOException e) {
                     e.printStackTrace();
-                } finally {
-                    new ImageUploadIPFSandML().execute(encodedImage);
                 }
+                String[] filpathstringdisplit=filepath.split("/");
+                String encodedImage = imageConverter.getStringFromBitmap(imageBitmap);
+                filename=filpathstringdisplit[filpathstringdisplit.length-1];
+              new ImageUploadIPFSandMLCamera().execute(encodedImage);
 
 
             }
@@ -316,8 +311,12 @@ public class DisplayImageActivity extends AppCompatActivity {
                 Cursor cursor = managedQuery(selectedVideoUri, projection, null, null, null);
                 cursor.moveToFirst();
                 String filePath = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DATA));
+                Log.i("VideoPath",filePath);
+                String[] filepahtstring=filePath.split("/");
+                filename=filepahtstring[filepahtstring.length-1];
+                String baseVideo=getBase64FromPath(filePath);
                 Bitmap thumb = ThumbnailUtils.createVideoThumbnail(filePath, MediaStore.Video.Thumbnails.MINI_KIND);
-                String baseVideo=imageConverter.getStringFromBitmap(thumb);
+                imageConverter.getStringFromBitmap(thumb);
                 Log.i("VideoString ",baseVideo);
                 new VideoUploadIPFSandML().execute(baseVideo);
 
@@ -337,7 +336,9 @@ public class DisplayImageActivity extends AppCompatActivity {
         int id1=item.getItemId();
         if(id1==R.id.action_signout){
             mAuth.signOut();
-            startActivity(new Intent(DisplayImageActivity.this,Signinup.class));
+            Intent videointent=new Intent(DisplayImageActivity.this,Signinup.class);
+            videointent.putExtra("Username",username);
+            startActivity(videointent);
             finish();
         }
         if(id1==R.id.action_video_call){
@@ -419,6 +420,7 @@ public class DisplayImageActivity extends AppCompatActivity {
             super.onPreExecute();
             progressDialog = new ProgressDialog(DisplayImageActivity.this);
             progressDialog.setMessage("Loading Images From Database.");
+           // progressDialog.setCancelable(false);
             progressDialog.show();
         }
 
@@ -449,6 +451,16 @@ public class DisplayImageActivity extends AppCompatActivity {
         boolean filenameexist;
         @Override
         protected Void doInBackground(String... strings) {
+            bitmap = BitmapFactory.decodeFile(strings[0]);
+
+            try {
+                FileOutputStream out = new FileOutputStream(strings[0]);
+                bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
+                out.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            String encodedImage = imageConverter.getStringFromBitmap(bitmap);
             boolean isthere=imagestring.contains(filename);
             if(isthere){
                 filenameexist=true;
@@ -470,7 +482,7 @@ public class DisplayImageActivity extends AppCompatActivity {
                     JSONObject obj = new JSONObject();
                     obj.put("user" , username);
                     obj.put("name",filename);
-                    obj.put("image" , strings[0]);
+                    obj.put("image" , encodedImage);
                  //   Log.i("imagesis",strings[0]);
 
                     wr.writeBytes(obj.toString());
@@ -503,6 +515,7 @@ public class DisplayImageActivity extends AppCompatActivity {
             super.onPreExecute();
             progressDialog = new ProgressDialog(DisplayImageActivity.this);
             progressDialog.setMessage("Uploading Image...");
+            progressDialog.setCancelable(false);
             progressDialog.show();
 
         }
@@ -518,7 +531,7 @@ public class DisplayImageActivity extends AppCompatActivity {
 
     }
 
-    private class VideoUploadIPFSandML extends AsyncTask<String,Void,Void>{
+    private class ImageUploadIPFSandMLCamera extends AsyncTask<String,Void,Void>{
         boolean filenameexist;
         @Override
         protected Void doInBackground(String... strings) {
@@ -576,6 +589,80 @@ public class DisplayImageActivity extends AppCompatActivity {
             super.onPreExecute();
             progressDialog = new ProgressDialog(DisplayImageActivity.this);
             progressDialog.setMessage("Uploading Image...");
+            progressDialog.setCancelable(false);
+            progressDialog.show();
+
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            progressDialog.dismiss();
+            if(filenameexist)
+                Toast.makeText(DisplayImageActivity.this,"Cannot Upload Same Images",Toast.LENGTH_LONG).show();
+            new ImageIPFS().execute();
+        }
+
+    }
+
+    private class VideoUploadIPFSandML extends AsyncTask<String,Void,Void>{
+        boolean filenameexist;
+        @Override
+        protected Void doInBackground(String... strings) {
+            boolean isthere=imagestring.contains(filename);
+            if(isthere){
+                filenameexist=true;
+                return null;
+            }
+            filenameexist=false;
+
+            try {
+                URL url = new URL(ConstantsIt.LOCALURLSENDVIDEO);
+                HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+                urlConnection.setDoOutput(true);
+                urlConnection.setDoInput(true);
+                urlConnection.setRequestMethod("POST");
+                OutputStream os=urlConnection.getOutputStream();
+
+                DataOutputStream wr = new DataOutputStream(os);
+
+                try {
+                    JSONObject obj = new JSONObject();
+                    obj.put("user" , username);
+                    obj.put("name",filename);
+                    obj.put("image" , strings[0]);
+
+                    wr.writeBytes(obj.toString());
+                    Log.i("JSON Input", obj.toString());
+                    wr.flush();
+                    wr.close();
+                    os.close();
+                } catch (JSONException ex) {
+                    ex.printStackTrace();
+                }
+
+                int responseCode = urlConnection.getResponseCode();
+                Log.i("RsponseCode", "is "+responseCode);
+
+                if(responseCode == HttpURLConnection.HTTP_OK){
+                    String server_response = readStream(urlConnection.getInputStream());
+                    Log.i("Response",server_response);
+                }
+
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progressDialog = new ProgressDialog(DisplayImageActivity.this);
+            progressDialog.setMessage("Uploading Image...");
+            progressDialog.setCancelable(false);
             progressDialog.show();
 
         }
@@ -612,6 +699,21 @@ public class DisplayImageActivity extends AppCompatActivity {
             }
         }
         return response.toString();
+    }
+
+    public static String getBase64FromPath(String path) {
+        String base64 = "";
+        try {/*from   w w w .  ja  va  2s  .  c om*/
+            File file = new File(path);
+            byte[] buffer = new byte[(int) file.length() + 100];
+            @SuppressWarnings("resource")
+            int length = new FileInputStream(file).read(buffer);
+            base64 = Base64.encodeToString(buffer, 0, length,
+                    Base64.DEFAULT);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return base64;
     }
 
 }

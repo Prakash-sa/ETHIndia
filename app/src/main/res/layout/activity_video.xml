@@ -15,11 +15,12 @@ tools:context=".ui.VideoActivity">
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@id/icon_padding">
+
         <ImageView
-            android:layout_width="@dimen/remote_back_icon_size"
-            android:layout_height="@dimen/remote_back_icon_size"
+            android:layout_width="146dp"
+            android:layout_height="163dp"
             android:layout_centerInParent="true"
-            android:src="@drawable/icon_agora_largest"/>
+            android:src="@drawable/logo" />
     </RelativeLayout>
     <RelativeLayout
         android:id="@+id/icon_padding"
@@ -37,6 +38,7 @@ tools:context=".ui.VideoActivity">
     android:layout_alignParentTop="true"
     android:layout_marginEnd="@dimen/local_preview_margin_right"
     android:layout_marginRight="@dimen/local_preview_margin_right"
+    android:elevation="50dp"
     android:layout_marginTop="@dimen/local_preview_margin_top"
     android:background="@color/localBackground">
 
@@ -45,7 +47,7 @@ tools:context=".ui.VideoActivity">
         android:layout_height="@dimen/local_back_icon_size"
         android:layout_gravity="center"
         android:scaleType="centerCrop"
-        android:src="@drawable/icon_agora_large" />
+        android:src="@drawable/logo" />
 </FrameLayout>
 
 <RelativeLayout

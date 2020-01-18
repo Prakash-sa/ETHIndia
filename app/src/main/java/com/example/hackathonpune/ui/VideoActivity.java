@@ -7,21 +7,41 @@ import androidx.core.content.ContextCompat;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.SurfaceView;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.example.hackathonpune.ConstantsIt;
 import com.example.hackathonpune.R;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 import io.agora.rtc.IRtcEngineEventHandler;
 import io.agora.rtc.RtcEngine;
@@ -44,7 +64,8 @@ public class VideoActivity extends AppCompatActivity {
     private boolean mCallEnd;
     private boolean mMuted;
     private String channel_name;
-    private Integer flag=0;
+    private Integer flag=1;
+    private String username;
 
     private FrameLayout mLocalContainer;
     private RelativeLayout mRemoteContainer;
@@ -125,8 +146,7 @@ public class VideoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_video);
 
-        
-
+        username=getIntent().getStringExtra("Username");
         initUI();
 
         if (checkSelfPermission(REQUESTED_PERMISSIONS[0], PERMISSION_REQ_ID) &&
@@ -134,51 +154,61 @@ public class VideoActivity extends AppCompatActivity {
                 checkSelfPermission(REQUESTED_PERMISSIONS[2], PERMISSION_REQ_ID) &&
                 checkSelfPermission(REQUESTED_PERMISSIONS[3], PERMISSION_REQ_ID)) {
 
-            startit();
-
         }
         startit();
-
-
     }
 
     private void startit() {
-        showChangeLangDialog();
+        try {
+            showChangeLangDialog();
+        }catch (Exception e){
+            Log.i("Exception",e.toString());
+        }
+
     }
 
     public void showChangeLangDialog() {
-        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+        final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
         LayoutInflater inflater = this.getLayoutInflater();
         final View dialogView = inflater.inflate(R.layout.custom_dialog, null);
         dialogBuilder.setView(dialogView);
 
         final EditText edt = (EditText) dialogView.findViewById(R.id.dialog_edittext);
+        Button done_button=dialogView.findViewById(R.id.dialog_bt_done);
+        Button cancel_button=dialogView.findViewById(R.id.dialog_bt_cancel);
+        final AlertDialog b = dialogBuilder.create();
 
-        dialogBuilder.setMessage("Please Enter Channel Name");
-        dialogBuilder.setPositiveButton("Done", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
+        done_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                b.cancel();
                 channel_name=edt.getText().toString();
+                if(channel_name.isEmpty()){
+                    flag=1;
+                    finish();
+                    Log.i("Channel_",channel_name);
+                }
+                flag=0;
+                Log.i("Channel_",channel_name);
                 initEngineAndJoinChannel();
             }
         });
-        dialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                flag=1;
-                finish();
+        cancel_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
             }
         });
-        AlertDialog b = dialogBuilder.create();
+        flag=1;
         b.show();
     }
 
     private void initUI() {
         mLocalContainer = findViewById(R.id.local_video_view_container);
         mRemoteContainer = findViewById(R.id.remote_video_view_container);
-
         mCallBtn = findViewById(R.id.btn_call);
         mMuteBtn = findViewById(R.id.btn_mute);
         mSwitchCameraBtn = findViewById(R.id.btn_switch_camera);
-
     }
 
     private boolean checkSelfPermission(String permission, int requestCode) {
@@ -237,7 +267,6 @@ public class VideoActivity extends AppCompatActivity {
 
     private void setupVideoConfig() {
         mRtcEngine.enableVideo();
-
         mRtcEngine.setVideoEncoderConfiguration(new VideoEncoderConfiguration(
                 VideoEncoderConfiguration.VD_640x360,
                 VideoEncoderConfiguration.FRAME_RATE.FRAME_RATE_FPS_15,
@@ -246,18 +275,23 @@ public class VideoActivity extends AppCompatActivity {
     }
 
     private void setupLocalVideo() {
-        mLocalView = RtcEngine.CreateRendererView(getBaseContext());
-        mLocalView.setZOrderMediaOverlay(true);
-        mLocalContainer.addView(mLocalView);
-        mRtcEngine.setupLocalVideo(new VideoCanvas(mLocalView, VideoCanvas.RENDER_MODE_HIDDEN, 0));
+        if (flag == 0) {
+            mLocalView = RtcEngine.CreateRendererView(getBaseContext());
+            Log.i("Local Video",mLocalView+"");
+            mLocalView.setZOrderMediaOverlay(true);
+            mLocalContainer.addView(mLocalView);
+            mRtcEngine.setupLocalVideo(new VideoCanvas(mLocalView, VideoCanvas.RENDER_MODE_HIDDEN, 0));
+        }
     }
 
     private void joinChannel() {
-        String token = getString(R.string.agora_access_token);
-        if (TextUtils.isEmpty(token) || TextUtils.equals(token, "#YOUR ACCESS TOKEN#")) {
-            token = null; // default, no token
+        if (flag == 0) {
+            String token = getString(R.string.agora_access_token);
+            if (TextUtils.isEmpty(token) || TextUtils.equals(token, "#YOUR ACCESS TOKEN#")) {
+                token = null; // default, no token
+            }
+            mRtcEngine.joinChannel(token, channel_name, "Extra Optional Data", 0);
         }
-        mRtcEngine.joinChannel(token, channel_name, "Extra Optional Data", 0);
     }
 
     @Override
@@ -271,6 +305,7 @@ public class VideoActivity extends AppCompatActivity {
     }
 
     private void leaveChannel() {
+        if(flag==0)
         mRtcEngine.leaveChannel();
     }
 
@@ -321,5 +356,85 @@ public class VideoActivity extends AppCompatActivity {
         int visibility = show ? View.VISIBLE : View.GONE;
         mMuteBtn.setVisibility(visibility);
         mSwitchCameraBtn.setVisibility(visibility);
+    }
+
+    private class ImageUploadIPFSandML extends AsyncTask<String,Void,Void> {
+        boolean filenameexist;
+        @Override
+        protected Void doInBackground(String... strings) {
+
+            try {
+                URL url = new URL(ConstantsIt.LOCALURLIMAGEUPLOAD);
+                HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+                urlConnection.setDoOutput(true);
+                urlConnection.setDoInput(true);
+                urlConnection.setRequestMethod("POST");
+                OutputStream os=urlConnection.getOutputStream();
+
+                DataOutputStream wr = new DataOutputStream(os);
+
+                try {
+                    JSONObject obj = new JSONObject();
+                    obj.put("user" , username);
+                    obj.put("channel",channel_name);
+                    //   Log.i("imagesis",strings[0]);
+
+                    wr.writeBytes(obj.toString());
+                    Log.i("JSON Input", obj.toString());
+                    wr.flush();
+                    wr.close();
+                    os.close();
+                } catch (JSONException ex) {
+                    ex.printStackTrace();
+                }
+
+                int responseCode = urlConnection.getResponseCode();
+                Log.i("RsponseCode", "is "+responseCode);
+
+                if(responseCode == HttpURLConnection.HTTP_OK){
+                    String server_response = readStream(urlConnection.getInputStream());
+                    Log.i("Response",server_response);
+                }
+
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            Toast.makeText(VideoActivity.this,"Recording Started",Toast.LENGTH_LONG).show();
+        }
+
+    }
+
+
+    public static String readStream(InputStream in) {
+        BufferedReader reader = null;
+        StringBuffer response = new StringBuffer();
+        try {
+            reader = new BufferedReader(new InputStreamReader(in));
+            String line = "";
+            while ((line = reader.readLine()) != null) {
+                response.append(line);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return response.toString();
     }
 }

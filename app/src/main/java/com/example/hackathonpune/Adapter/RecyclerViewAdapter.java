@@ -79,7 +79,10 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                         int id2=item.getItemId();
 
                         if(id2==R.id.action_download){
-                            new ImageSave().execute(imagenameis);
+
+
+                                new ImageSave().execute(imagenameis);
+
                         }
                         if(id2==R.id.action_delete){
                             new DeleteImage().execute(imagenameis);
@@ -95,7 +98,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         holder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.i("CardView","True");
                 PopupMenu popupMenu=new PopupMenu(context,v);
                 popupMenu.inflate(R.menu.image_menu);
                 popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
@@ -104,7 +106,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                         int id2=item.getItemId();
 
                         if(id2==R.id.action_download){
-                            new ImageSave().execute(imagenameis);
+                             new ImageSave().execute(imagenameis);
                         }
                         if(id2==R.id.action_delete){
                             new DeleteImage().execute(imagenameis);
@@ -200,6 +202,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             super.onPreExecute();
             progressDialog = new ProgressDialog(context);
             progressDialog.setMessage("Downloading...");
+            progressDialog.setCancelable(false);
             progressDialog.show();
         }
 
@@ -265,6 +268,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             super.onPreExecute();
             progressDialog = new ProgressDialog(context);
             progressDialog.setMessage("Removing...");
+            progressDialog.setCancelable(false);
             progressDialog.show();
         }
 
@@ -276,6 +280,74 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         }
     }
 
+    private class VideoSaveAsync extends AsyncTask<String,Void,Void>{
+
+        String filepath;
+
+        @Override
+        protected Void doInBackground(String... strings) {
+            try {
+                URL url = new URL(ConstantsIt.LOCALURLRECEIVEVIDEO);
+
+                HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+                urlConnection.setDoOutput(true);
+                urlConnection.setDoInput(true);
+                urlConnection.setRequestMethod("POST");
+                OutputStream os=urlConnection.getOutputStream();
+
+                DataOutputStream wr = new DataOutputStream(os);
+
+                try {
+                    JSONObject obj = new JSONObject();
+                    obj.put("user" , username);
+                    obj.put("image",strings[0]);
+
+
+                    wr.writeBytes(obj.toString());
+                    Log.i("JSON Input", obj.toString());
+                    wr.flush();
+                    wr.close();
+                    os.close();
+                } catch (JSONException ex) {
+                    ex.printStackTrace();
+                }
+                int responseCode = urlConnection.getResponseCode();
+                Log.i("RsponseCode", "is "+responseCode);
+                if(responseCode == HttpURLConnection.HTTP_OK){
+                    String server_response = readStream(urlConnection.getInputStream());
+                    Log.i("Response",server_response);
+                    StoreImage storeImage=new StoreImage();
+                    filepath=storeImage.saveVideo(context,server_response);
+
+                }
+
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progressDialog = new ProgressDialog(context);
+            progressDialog.setMessage("Downloading...");
+            progressDialog.setCancelable(false);
+            progressDialog.show();
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            if(filepath!=null)
+                Toast.makeText(context,"Video Stored at: "+filepath,Toast.LENGTH_LONG).show();
+            else Toast.makeText(context,"Error in Saveing file ",Toast.LENGTH_LONG).show();
+            progressDialog.dismiss();
+            super.onPostExecute(aVoid);
+        }
+    }
 
     public static String readStream(InputStream in) {
         BufferedReader reader = null;

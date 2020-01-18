@@ -14,6 +14,6 @@
     <color name="white">#ffffff</color>
     <color name="login_white">#F1E1DE</color>
 
-    <color name="localBackground">#827b92</color>
-    <color name="remoteBackground">#484258</color>
+    <color name="localBackground">#f2f5df</color>
+    <color name="remoteBackground">#eaf1cd</color>
 </resources>
