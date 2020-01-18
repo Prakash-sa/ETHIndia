@@ -11,6 +11,9 @@
     <color name="cyan_500">#00BCD4</color>
     <color name="light_blue_500">#03A9F4</color>
 
+    <color name="white">#ffffff</color>
+    <color name="login_white">#F1E1DE</color>
+
     <color name="localBackground">#827b92</color>
     <color name="remoteBackground">#484258</color>
 </resources>

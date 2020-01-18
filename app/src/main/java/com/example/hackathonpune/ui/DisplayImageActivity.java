@@ -319,13 +319,8 @@ public class DisplayImageActivity extends AppCompatActivity {
                 Bitmap thumb = ThumbnailUtils.createVideoThumbnail(filePath, MediaStore.Video.Thumbnails.MINI_KIND);
                 String baseVideo=imageConverter.getStringFromBitmap(thumb);
                 Log.i("VideoString ",baseVideo);
-                try {
-                    cacheImage.cacheFromBitmap(thumb, "");
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } finally {
-                    new ImageUploadIPFSandML().execute(baseVideo);
-                }
+                new VideoUploadIPFSandML().execute(baseVideo);
+
             }
         }
     }
@@ -434,7 +429,6 @@ public class DisplayImageActivity extends AppCompatActivity {
             if(imagestring.isEmpty()){
                 progressDialog.cancel();
                 textView.setVisibility(View.VISIBLE);
-
                 return;
             }
 
@@ -478,6 +472,79 @@ public class DisplayImageActivity extends AppCompatActivity {
                     obj.put("name",filename);
                     obj.put("image" , strings[0]);
                  //   Log.i("imagesis",strings[0]);
+
+                    wr.writeBytes(obj.toString());
+                    Log.i("JSON Input", obj.toString());
+                    wr.flush();
+                    wr.close();
+                    os.close();
+                } catch (JSONException ex) {
+                    ex.printStackTrace();
+                }
+
+                int responseCode = urlConnection.getResponseCode();
+                Log.i("RsponseCode", "is "+responseCode);
+
+                if(responseCode == HttpURLConnection.HTTP_OK){
+                    String server_response = readStream(urlConnection.getInputStream());
+                    Log.i("Response",server_response);
+                }
+
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progressDialog = new ProgressDialog(DisplayImageActivity.this);
+            progressDialog.setMessage("Uploading Image...");
+            progressDialog.show();
+
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            progressDialog.dismiss();
+            if(filenameexist)
+                Toast.makeText(DisplayImageActivity.this,"Cannot Upload Same Images",Toast.LENGTH_LONG).show();
+            new ImageIPFS().execute();
+        }
+
+    }
+
+    private class VideoUploadIPFSandML extends AsyncTask<String,Void,Void>{
+        boolean filenameexist;
+        @Override
+        protected Void doInBackground(String... strings) {
+            boolean isthere=imagestring.contains(filename);
+            if(isthere){
+                filenameexist=true;
+                return null;
+            }
+            filenameexist=false;
+
+            try {
+                URL url = new URL(ConstantsIt.LOCALURLIMAGEUPLOAD);
+                HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+                urlConnection.setDoOutput(true);
+                urlConnection.setDoInput(true);
+                urlConnection.setRequestMethod("POST");
+                OutputStream os=urlConnection.getOutputStream();
+
+                DataOutputStream wr = new DataOutputStream(os);
+
+                try {
+                    JSONObject obj = new JSONObject();
+                    obj.put("user" , username);
+                    obj.put("name",filename);
+                    obj.put("image" , strings[0]);
+                    //   Log.i("imagesis",strings[0]);
 
                     wr.writeBytes(obj.toString());
                     Log.i("JSON Input", obj.toString());

@@ -3,6 +3,7 @@ package com.example.hackathonpune.Algorithms;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Environment;
+import android.util.Base64;
 import android.util.Log;
 
 import java.io.File;
@@ -44,6 +45,25 @@ public class StoreImage {
 
 
     }
+
+
+    public String saveVideo(String s){
+
+        File file=createVideoFile();
+        byte[] decodedBytes = Base64.decode(s.getBytes(),1);
+
+        try {
+
+            FileOutputStream out = new FileOutputStream(file);
+            out.write(decodedBytes);
+            out.close();
+        } catch (Exception e) {
+            Log.e("Error", e.toString());
+
+        }
+        return file.toString();
+
+    }
     private File createImageFile() throws IOException {
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String imageFileName = "PNG_" + timeStamp + "_";
@@ -64,5 +84,27 @@ public class StoreImage {
         String cameraFilePath = "file://" + image.getAbsolutePath();
         return image;
     }
+
+    private File createVideoFile() {
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "PNG_" + timeStamp + "_";
+        File storageDir = new File(Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_DCIM), "Camera");
+        File image=null;
+        try {
+            image = File.createTempFile(
+                    imageFileName,  /* prefix */
+                    ".mp4",         /* suffix */
+                    storageDir      /* directory */
+            );
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+
+        // Save a file: path for using again
+        String cameraFilePath = "file://" + image.getAbsolutePath();
+        return image;
+    }
+
 
 }
