@@ -92,7 +92,6 @@
             android:src="@drawable/ic_camera_alt_black_24dp"
             fab:fab_label="Upload From Camera"
             fab:fab_size="mini" />
-
     </com.github.clans.fab.FloatingActionMenu>
 
 

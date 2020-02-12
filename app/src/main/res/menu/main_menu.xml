@@ -21,6 +21,15 @@
         android:orderInCategory="100"
         android:title="Video Broadcast"
         app:showAsAction="never" />
-
+    <item
+        android:id="@+id/action_qr_scanner"
+        android:orderInCategory="100"
+        android:title="Qr Scanner"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_link_file"
+        android:orderInCategory="100"
+        android:title="Add File with Link"
+        app:showAsAction="never" />
 
 </menu>

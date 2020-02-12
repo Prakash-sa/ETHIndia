@@ -20,7 +20,7 @@
 
             <ImageView
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="100dp"
                 android:src="@mipmap/ic_launcher"
                 android:id="@+id/imageviewrecycler"/>
 
@@ -35,12 +35,12 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/imagename"
                     android:text="ImageName"
-                    android:textSize="5dp"
+                    android:textSize="10dp"
+                    android:layout_gravity="center"
+                    android:textAlignment="center"
                     android:textStyle="bold"
                     android:fontFamily="monospace"
-                    android:paddingTop="10dp"
-                    android:paddingBottom="5dp"
-                    android:paddingLeft="30dp"
+                    android:layout_margin="10dp"
                     />
 
 

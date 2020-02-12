@@ -2,11 +2,11 @@ apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'
 
 android {
-    compileSdkVersion 29
+    compileSdkVersion 28
     buildToolsVersion "29.0.2"
     defaultConfig {
         applicationId "com.example.hackathonpune"
-        minSdkVersion 26
+        minSdkVersion 28
         targetSdkVersion 29
         versionCode 1
         versionName "1.0"
@@ -37,6 +37,9 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 
     implementation 'io.agora.rtc:full-sdk:2.4.1'
+    implementation 'com.google.zxing:core:3.2.1'
+    implementation 'com.journeyapps:zxing-android-embedded:3.2.0@aar'
+    implementation 'com.budiyev.android:code-scanner:2.1.0'
 
     implementation 'com.zolad:zoominimageview:1.0.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'

@@ -7,30 +7,14 @@
     android:textColor="#ffffff"
     >
     <item
-        android:id="@+id/action_download"
+        android:id="@+id/action_download_everyone"
         android:orderInCategory="100"
         android:title="Download"
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/action_delete"
+        android:id="@+id/action_delete_everyone"
         android:orderInCategory="100"
         android:title="Delete"
-        app:showAsAction="never" />
-
-    <item
-        android:id="@+id/action_share"
-        android:orderInCategory="100"
-        android:title="Share"
-        app:showAsAction="never" />
-    <item
-        android:id="@+id/action_public"
-        android:orderInCategory="100"
-        android:title="Make Public"
-        app:showAsAction="never" />
-    <item
-        android:id="@+id/action_list_of_people"
-        android:orderInCategory="100"
-        android:title="Add People"
         app:showAsAction="never" />
 </menu>
