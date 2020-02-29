@@ -3,7 +3,8 @@ Use Moibit as decentralised storage to store images, video, files of low quality
 
 # Demo
 
-https://github.com/Prakash-sa/HackathonPune/blob/master/Screenrecorder-2019-12-22-10-59-44-561.mp4
+https://youtu.be/eMeY1kKHXfc
+
 
 
 # Features
