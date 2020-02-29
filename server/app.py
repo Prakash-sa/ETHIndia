@@ -54,7 +54,7 @@ def remove(filename):
     headers = {"api_key":"12D3KooWHKy1gQesCpXkhXwGCMktUeWRMLnhXFj3sdMURoWoufJb",
     "api_secret": "08011240db4674dd3d2ffc226dd4f8bb5d58efd8469d8ba1d6d9a05ad2ff33194ff9c59f6f970cc42dfc61b622a42c14ca822c825c50c1beb1e99decc35d16eebc5011f4"}
 
-    payload = {'path': "6.jpeg"}
+    payload = {'path': }
 
     response = requests.post(url,headers=headers, data = json.dumps(payload))
     print(response.text)
