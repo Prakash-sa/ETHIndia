@@ -88,17 +88,8 @@ public class CacheImage {
             //            }
 
 
-            if (Build.VERSION.SDK_INT >= 29) {
-                try {
-                    bitmap = createImageThumbnail(file, new Size(300, 300), null);
-                } catch (IOException e) {
-                    e.printStackTrace();
-
-                }
-            } else {
                 bitmap = extractThumbnail(bitmap, 300, 300);
 
-            }
             return null;
 
         }
