@@ -1,5 +1,5 @@
 # ETHIndia
-Use Moibit as decentralised storage to store images, video, files of low quality and when we want to download then upgrade its quality by Machine Learning model(GAN)
+Use Moibit as decentralised storage to store images, video, files.
 
 # Demo
 
