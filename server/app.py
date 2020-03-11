@@ -54,7 +54,7 @@ def remove(filename):
     headers = {"api_key":"12D3KooWHKy1gQesCpXkhXwGCMktUeWRMLnhXFj3sdMURoWoufJb",
     "api_secret": "08011240db4674dd3d2ffc226dd4f8bb5d58efd8469d8ba1d6d9a05ad2ff33194ff9c59f6f970cc42dfc61b622a42c14ca822c825c50c1beb1e99decc35d16eebc5011f4"}
 
-    payload = {'path': }
+    payload = {'path': filename+'.txt'}
 
     response = requests.post(url,headers=headers, data = json.dumps(payload))
     print(response.text)
@@ -186,20 +186,23 @@ def live_stream_start():
         if c!='-':
             s+=c
     s = s[:len(s)-2]
-    s+='29'
+    s+='11'
     for files in os.listdir(s):
         print(files)
         fil = files
     print(fil)
+    var = str(int(time.time()*1000))+'.mp4'
     for files in os.listdir(s[:]+'/'+fil):
         if 'mp4' in files:
-            uu.encode(s+'/'+fil+'/'+files,'video.txt')
+            #uu.encode(s+'/'+fil+'/'+files,'video.txt')
+            uu.encode(s+'/'+fil+'/'+files,var+'.txt')
             break
     #res = client.add('video.txt')
-    res = upload_file('video.txt')
+    res = upload_file(var+'.txt')
     hash_file = res
     fil = open(user+'.txt','a+')
-    fil.write('\n'+hash_file+'.'+str(int(time.time()*1000))+'.mp4')
+    #fil.write('\n'+hash_file+'.'+str(int(time.time()*1000))+'.mp4')
+    fil.write('\n'+hash_file+'.'+var)
     fil.close()
     os.system('rm -rf '+ s)
     return 'True'
@@ -215,12 +218,14 @@ def vid():
     image = lan['image']
     with open(name,'wb') as fh:
         fh.write(base64.b64decode(image))
-    uu.encode(name,'video.txt')
+    #uu.encode(name,'video.txt')
+    uu.encode(name,name+'.txt')
     #res = client.add('video.txt')
-    res = upload_file('video.txt')
+    #res = upload_file('video.txt')
+    res = upload_file(name+'.txt')
     hash_file = res
     fil = open(user+'.txt','a+')
-    fil.write('\n'+hash_file+name)
+    fil.write('\n'+hash_file+'.'+name)
     fil.close()
     os.remove(name)
     return 'True'
@@ -237,7 +242,8 @@ def live_stream_download():
             #client.get(line[:59])
             download_file_video(line[:59],name)
             break
-    uu.decode('video.txt','video-copy.mp4')
+    #uu.decode('video.txt','video-copy.mp4')
+    uu.decode(name+'.txt','video-copy.mp4')
     with open('video-copy.mp4','rb') as image:
         image_reader = image.read()
         image_encode = base64.encodestring(image_reader)
