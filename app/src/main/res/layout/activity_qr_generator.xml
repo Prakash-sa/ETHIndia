@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".ui.QrGenerator">
+
+    <ImageView
+        android:id="@+id/qr_code"
+        android:layout_width="226dp"
+        android:layout_height="253dp"
+        android:layout_marginTop="170dp"
+        android:layout_gravity="center"
+        android:src="@color/colorAccent" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textIsSelectable="true"
+        android:textSize="20dp"
+        android:id="@+id/qr_code_link"
+        android:layout_marginTop="50dp"
+        android:layout_gravity="center"
+        />
+</LinearLayout>

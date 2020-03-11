@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:app="http://schemas.android.com/apk/res-auto"
+xmlns:tools="http://schemas.android.com/tools"
+    xmlns:fab="http://schemas.android.com/apk/res-auto"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+tools:context=".ui.VideoActivity">
+
+<RelativeLayout
+    android:id="@+id/remote_video_view_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/remoteBackground">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/icon_padding">
+
+        <ImageView
+            android:layout_width="146dp"
+            android:layout_height="163dp"
+            android:layout_centerInParent="true"
+            android:src="@drawable/logo" />
+    </RelativeLayout>
+    <RelativeLayout
+        android:id="@+id/icon_padding"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/remote_back_icon_margin_bottom"
+        android:layout_alignParentBottom="true"/>
+</RelativeLayout>
+
+<FrameLayout
+    android:id="@+id/local_video_view_container"
+    android:layout_width="@dimen/local_preview_width"
+    android:layout_height="@dimen/local_preview_height"
+    android:layout_alignParentEnd="true"
+    android:layout_alignParentRight="true"
+    android:layout_alignParentTop="true"
+    android:layout_marginEnd="@dimen/local_preview_margin_right"
+    android:layout_marginRight="@dimen/local_preview_margin_right"
+    android:elevation="50dp"
+    android:layout_marginTop="@dimen/local_preview_margin_top"
+    android:background="@color/localBackground">
+
+    <ImageView
+        android:layout_width="@dimen/local_back_icon_size"
+        android:layout_height="@dimen/local_back_icon_size"
+        android:layout_gravity="center"
+        android:scaleType="centerCrop"
+        android:src="@drawable/logo" />
+</FrameLayout>
+
+<RelativeLayout
+    android:id="@+id/control_panel"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_alignParentBottom="true"
+    android:layout_marginBottom="@dimen/control_bottom_margin">
+
+    <ImageView
+        android:id="@+id/btn_call"
+        android:layout_width="@dimen/call_button_size"
+        android:layout_height="@dimen/call_button_size"
+        android:elevation="20dp"
+        android:layout_centerInParent="true"
+        android:onClick="onCallClicked"
+        android:src="@drawable/btn_endcall"
+        android:scaleType="centerCrop"/>
+
+    <ImageView
+        android:id="@+id/btn_switch_camera"
+        android:layout_width="@dimen/other_button_size"
+        android:layout_height="@dimen/other_button_size"
+        android:elevation="20dp"
+        android:layout_toRightOf="@id/btn_call"
+        android:layout_toEndOf="@id/btn_call"
+        android:layout_marginLeft="@dimen/control_bottom_horizontal_margin"
+        android:layout_centerVertical="true"
+        android:onClick="onSwitchCameraClicked"
+        android:src="@drawable/btn_switch_camera"
+        android:scaleType="centerCrop"/>
+
+    <ImageView
+        android:id="@+id/btn_mute"
+        android:layout_width="@dimen/other_button_size"
+        android:layout_height="@dimen/other_button_size"
+        android:elevation="20dp"
+        android:layout_toLeftOf="@id/btn_call"
+        android:layout_toStartOf="@id/btn_call"
+        android:layout_marginRight="@dimen/control_bottom_horizontal_margin"
+        android:layout_centerVertical="true"
+        android:onClick="onLocalAudioMuteClicked"
+        android:src="@drawable/btn_unmute"
+        android:scaleType="centerCrop"/>
+
+</RelativeLayout>
+    <com.github.clans.fab.FloatingActionMenu
+        android:id="@+id/videomenu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:transitionName="floattrans"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="24dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        fab:menu_animationDelayPerItem="50"
+        fab:menu_backgroundColor="@android:color/transparent"
+        fab:menu_buttonSpacing="0dp"
+        fab:menu_colorNormal="#DA4336"
+        fab:menu_colorPressed="#E75043"
+        fab:menu_colorRipple="#99FFFFFF"
+        fab:menu_fab_size="normal"
+        fab:menu_labels_colorNormal="#333333"
+        fab:menu_labels_colorPressed="#444444"
+        fab:menu_labels_colorRipple="#66FFFFFF"
+        fab:menu_labels_cornerRadius="3dp"
+        fab:menu_labels_ellipsize="none"
+        fab:menu_labels_margin="0dp"
+        fab:menu_labels_maxLines="-1"
+        fab:menu_labels_padding="8dp"
+        fab:menu_labels_paddingBottom="4dp"
+        fab:menu_labels_paddingLeft="8dp"
+        fab:menu_labels_paddingRight="8dp"
+        fab:menu_labels_paddingTop="4dp"
+        fab:menu_labels_position="left"
+        fab:menu_labels_showShadow="true"
+        fab:menu_labels_singleLine="false"
+        fab:menu_labels_textColor="#FFFFFF"
+        fab:menu_labels_textSize="14sp"
+        fab:menu_openDirection="up"
+        fab:menu_shadowColor="#66000000"
+        fab:menu_shadowRadius="4dp"
+        fab:menu_shadowXOffset="1dp"
+        fab:menu_shadowYOffset="3dp"
+        fab:menu_showShadow="true">
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/fab_start_recording"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_record_voice_over_black_24dp"
+            fab:fab_label="Start Recording"
+            fab:fab_size="mini" />
+
+    </com.github.clans.fab.FloatingActionMenu>
+
+</RelativeLayout>

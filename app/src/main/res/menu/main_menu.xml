@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:popupTheme="@style/MyDarkToolbarStyle"
+    android:theme="@style/AppTheme"
+    android:colorBackground="@color/colorPrimary"
+    android:textColor="#ffffff"
+    >
+    <item android:id="@+id/action_refresh"
+        android:orderInCategory="100"
+        app:showAsAction="always"
+        android:icon="@drawable/ic_refresh_black_24dp"
+        android:title="Refresh"/>
+    <item
+        android:id="@+id/action_signout"
+        android:orderInCategory="100"
+        android:title="SignOut"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_video_call"
+        android:orderInCategory="100"
+        android:title="Video Broadcast"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_qr_scanner"
+        android:orderInCategory="100"
+        android:title="Qr Scanner"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_link_file"
+        android:orderInCategory="100"
+        android:title="Add File with Link"
+        app:showAsAction="never" />
+
+</menu>

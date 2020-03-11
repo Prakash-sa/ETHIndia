@@ -1,0 +1,3 @@
+#/bin/sh
+#echo $(pwd)
+/home/sarvesh/Desktop/moibit/Agora_Recording_SDK_for_Linux_FULL/samples/cpp/recorder_local --appId fc3ded960497405988753ba40c987b06 --uid 0 --channel $1 --appliteDir /home/sarvesh/Desktop/moibit/Agora_Recording_SDK_for_Linux_FULL/bin/ --idle 3 --layoutMode 1 --recordFileRootDir /home/sarvesh/Desktop/moibit/ --isMixingEnabled 1  --mixedVideoAudio 2

@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">DiskSpace</string>
+    <string name="agora_app_id">fc3ded960497405988753ba40c987b06</string>
+    <!-- Obtain a temp Access Token at https://dashboard.agora.io -->
+    <!-- You will need to deploy your own token server for production release -->
+    <!-- Leave this value empty if Security keys/Token is not enabled for your project -->
+    <string name="agora_access_token"></string>
+</resources>

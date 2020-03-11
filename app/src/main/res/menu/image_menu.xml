@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:popupTheme="@style/MyDarkToolbarStyle"
+    android:theme="@style/AppTheme"
+    android:colorBackground="@color/colorPrimary"
+    android:textColor="#ffffff"
+    >
+    <item
+        android:id="@+id/action_download"
+        android:orderInCategory="100"
+        android:title="Download"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_delete"
+        android:orderInCategory="100"
+        android:title="Delete"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_share"
+        android:orderInCategory="100"
+        android:title="Share"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_public"
+        android:orderInCategory="100"
+        android:title="Make Public"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_list_of_people"
+        android:orderInCategory="100"
+        android:title="Add People"
+        app:showAsAction="never" />
+</menu>

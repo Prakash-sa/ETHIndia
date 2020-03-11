@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.hackathonnitk">
+
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="true" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.hardware.camera" />
+    <uses-permission android:name="android.hardware.camera.autofocus" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme"
+        android:usesCleartextTraffic="true">
+        <activity android:name=".ui.AddPeople" android:parentActivityName=".ui.DisplayImageActivity"></activity>
+        <activity android:name=".ui.Everyone" />
+        <activity
+            android:name=".ui.ScanneQrCode"
+            android:parentActivityName=".ui.DisplayImageActivity" />
+        <activity
+            android:name=".ui.Linkqrcode"
+            android:parentActivityName=".ui.DisplayImageActivity" />
+        <activity
+            android:name=".ui.QrGenerator"
+            android:parentActivityName=".ui.DisplayImageActivity" />
+        <activity android:name=".ui.RecoveryImage" />
+        <activity
+            android:name=".ui.VideoActivity"
+            android:theme="@style/FullScreenVideoTheme" />
+        <activity
+            android:name=".ui.Signinup"
+            android:theme="@style/NoActionbar" />
+        <activity
+            android:name=".ui.Splashactivity"
+            android:theme="@style/NoActionbar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".ui.DisplayImageActivity" />
+        <activity
+            android:name=".ui.ViewImage"
+            android:parentActivityName=".ui.DisplayImageActivity"
+            android:theme="@style/FullScreenVideoTheme" />
+        <activity
+            android:name=".MainActivity"
+            android:theme="@style/NoActionbar" />
+
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths"/>
+        </provider>
+    </application>
+
+</manifest>
