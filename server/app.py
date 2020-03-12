@@ -59,6 +59,19 @@ def remove(filename):
     response = requests.post(url,headers=headers, data = json.dumps(payload))
     print(response.text)
     return "True"
+
+def remove_image(filename):
+    url = 'https://kfs1.moibit.io/moibit/v0/remove'
+
+    headers = {"api_key":"12D3KooWHKy1gQesCpXkhXwGCMktUeWRMLnhXFj3sdMURoWoufJb",
+    "api_secret": "08011240db4674dd3d2ffc226dd4f8bb5d58efd8469d8ba1d6d9a05ad2ff33194ff9c59f6f970cc42dfc61b622a42c14ca822c825c50c1beb1e99decc35d16eebc5011f4"}
+
+    payload = {'path': filename}
+
+    response = requests.post(url,headers=headers, data = json.dumps(payload))
+    print(response.text)
+    return "True"
+
     
 @app.route('/store',methods = ['GET','POST'])
 def recieve_crappy():
@@ -130,13 +143,38 @@ def delete_image():
     lan = flask.request.get_json(force = True)
     user = lan['user']
     image = lan['image']
+    if user!='public':
+        with open(user+".txt", "r") as f:
+            lines = f.readlines()
+        with open(user+".txt", "w") as f:
+            for line in lines:
+                if image not in line:
+                    f.write(line)
+        if '.mp4' in image:
+            remove(image)
+        else:
+            remove_image(image)
+        return 'True'
+    else:
+        with open(user+".txt", "r") as f:
+            lines = f.readlines()
+        with open(user+".txt", "w") as f:
+            for line in lines:
+                if image not in line:
+                    f.write(line)
+        return 'True'
+
+@app.route('/delete_public',methods = ['GET','POST'])
+def delete_public():
+    lan = flask.request.get_json(force = True)
+    user = lan['user']
+    image = lan['image']
     with open(user+".txt", "r") as f:
         lines = f.readlines()
     with open(user+".txt", "w") as f:
         for line in lines:
             if image not in line:
                 f.write(line)
-    remove(image)
     return 'True'
 
 @app.route('/video',methods = ['GET','POST'])
@@ -186,7 +224,7 @@ def live_stream_start():
         if c!='-':
             s+=c
     s = s[:len(s)-2]
-    s+='11'
+    s+='12'
     for files in os.listdir(s):
         print(files)
         fil = files
@@ -347,4 +385,3 @@ def images_public_download():
 if __name__ == '__main__':
     app.debug = True
     app.run(host='0.0.0.0', port = 5000)
-
