@@ -18,4 +18,5 @@ public class ConstantsIt {
     public static final String LOCALURLPUBLICIMAGEDOWNLOAD ="https://3dd57bec.ngrok.io/public_images_download" ;
     public static final String LOCALURLPUBLICIMAGEDELETE ="https://3dd57bec.ngrok.io/public_images_delete" ;
 
+
 }
