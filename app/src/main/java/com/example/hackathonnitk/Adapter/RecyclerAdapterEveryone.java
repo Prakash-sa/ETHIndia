@@ -304,6 +304,7 @@ public class RecyclerAdapterEveryone extends RecyclerView.Adapter<RecyclerAdapte
 
                 try {
                     JSONObject obj = new JSONObject();
+                    obj.put("user","public");
                     obj.put("image",strings[0]);
 
                     wr.writeBytes(obj.toString());
