@@ -6,10 +6,14 @@ import subprocess
 import ipfshttpclient
 import base64
 from PIL import Image
+from flask_ngrok import run_with_ngrok
 import uu
 from datetime import date
+from flask_cors import CORS
 import time
 app = flask.Flask(__name__)
+CORS(app)
+run_with_ngrok(app)
 
 def upload_file(file_name):
     url = 'https://kfs1.moibit.io/moibit/v0/writefile'
@@ -54,17 +58,11 @@ def remove(filename):
     headers = {"api_key":"12D3KooWHKy1gQesCpXkhXwGCMktUeWRMLnhXFj3sdMURoWoufJb",
     "api_secret": "08011240db4674dd3d2ffc226dd4f8bb5d58efd8469d8ba1d6d9a05ad2ff33194ff9c59f6f970cc42dfc61b622a42c14ca822c825c50c1beb1e99decc35d16eebc5011f4"}
 
-<<<<<<< HEAD
-    payload = {'path': }
-=======
     payload = {'path': filename+'.txt'}
->>>>>>> 56ee754c6320506e7e78b6c37330e083f9ee34b8
 
     response = requests.post(url,headers=headers, data = json.dumps(payload))
     print(response.text)
     return "True"
-<<<<<<< HEAD
-=======
 
 def remove_image(filename):
     url = 'https://kfs1.moibit.io/moibit/v0/remove'
@@ -78,7 +76,6 @@ def remove_image(filename):
     print(response.text)
     return "True"
 
->>>>>>> 56ee754c6320506e7e78b6c37330e083f9ee34b8
     
 @app.route('/store',methods = ['GET','POST'])
 def recieve_crappy():
@@ -150,8 +147,6 @@ def delete_image():
     lan = flask.request.get_json(force = True)
     user = lan['user']
     image = lan['image']
-<<<<<<< HEAD
-=======
     if user!='public':
         with open(user+".txt", "r") as f:
             lines = f.readlines()
@@ -178,17 +173,12 @@ def delete_public():
     lan = flask.request.get_json(force = True)
     user = lan['user']
     image = lan['image']
->>>>>>> 56ee754c6320506e7e78b6c37330e083f9ee34b8
     with open(user+".txt", "r") as f:
         lines = f.readlines()
     with open(user+".txt", "w") as f:
         for line in lines:
             if image not in line:
                 f.write(line)
-<<<<<<< HEAD
-    remove(image)
-=======
->>>>>>> 56ee754c6320506e7e78b6c37330e083f9ee34b8
     return 'True'
 
 @app.route('/video',methods = ['GET','POST'])
@@ -238,26 +228,11 @@ def live_stream_start():
         if c!='-':
             s+=c
     s = s[:len(s)-2]
-<<<<<<< HEAD
-    s+='29'
-=======
     s+='12'
->>>>>>> 56ee754c6320506e7e78b6c37330e083f9ee34b8
     for files in os.listdir(s):
         print(files)
         fil = files
     print(fil)
-<<<<<<< HEAD
-    for files in os.listdir(s[:]+'/'+fil):
-        if 'mp4' in files:
-            uu.encode(s+'/'+fil+'/'+files,'video.txt')
-            break
-    #res = client.add('video.txt')
-    res = upload_file('video.txt')
-    hash_file = res
-    fil = open(user+'.txt','a+')
-    fil.write('\n'+hash_file+'.'+str(int(time.time()*1000))+'.mp4')
-=======
     var = str(int(time.time()*1000))+'.mp4'
     for files in os.listdir(s[:]+'/'+fil):
         if 'mp4' in files:
@@ -270,7 +245,6 @@ def live_stream_start():
     fil = open(user+'.txt','a+')
     #fil.write('\n'+hash_file+'.'+str(int(time.time()*1000))+'.mp4')
     fil.write('\n'+hash_file+'.'+var)
->>>>>>> 56ee754c6320506e7e78b6c37330e083f9ee34b8
     fil.close()
     os.system('rm -rf '+ s)
     return 'True'
@@ -286,14 +260,6 @@ def vid():
     image = lan['image']
     with open(name,'wb') as fh:
         fh.write(base64.b64decode(image))
-<<<<<<< HEAD
-    uu.encode(name,'video.txt')
-    #res = client.add('video.txt')
-    res = upload_file('video.txt')
-    hash_file = res
-    fil = open(user+'.txt','a+')
-    fil.write('\n'+hash_file+name)
-=======
     #uu.encode(name,'video.txt')
     uu.encode(name,name+'.txt')
     #res = client.add('video.txt')
@@ -302,7 +268,6 @@ def vid():
     hash_file = res
     fil = open(user+'.txt','a+')
     fil.write('\n'+hash_file+'.'+name)
->>>>>>> 56ee754c6320506e7e78b6c37330e083f9ee34b8
     fil.close()
     os.remove(name)
     return 'True'
@@ -319,12 +284,8 @@ def live_stream_download():
             #client.get(line[:59])
             download_file_video(line[:59],name)
             break
-<<<<<<< HEAD
-    uu.decode('video.txt','video-copy.mp4')
-=======
     #uu.decode('video.txt','video-copy.mp4')
     uu.decode(name+'.txt','video-copy.mp4')
->>>>>>> 56ee754c6320506e7e78b6c37330e083f9ee34b8
     with open('video-copy.mp4','rb') as image:
         image_reader = image.read()
         image_encode = base64.encodestring(image_reader)
@@ -425,10 +386,8 @@ def images_public_download():
     #os.remove(image+'.tfci')
     return my_string
 
-if __name__ == '__main__':
-    app.debug = True
-    app.run(host='0.0.0.0', port = 5000)
-<<<<<<< HEAD
+app.run()
 
-=======
->>>>>>> 56ee754c6320506e7e78b6c37330e083f9ee34b8
+# if __name__ == '__main__':
+#     app.debug = True
+#     app.run(host='0.0.0.0', port = 5000)
