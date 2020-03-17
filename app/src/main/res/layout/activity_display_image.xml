@@ -71,6 +71,13 @@
         fab:menu_shadowYOffset="3dp"
         fab:menu_showShadow="true">
         <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/uploadaudio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_video_call_black_24dp"
+            fab:fab_label="Upload Audio"
+            fab:fab_size="mini" />
+        <com.github.clans.fab.FloatingActionButton
             android:id="@+id/uploadvideo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

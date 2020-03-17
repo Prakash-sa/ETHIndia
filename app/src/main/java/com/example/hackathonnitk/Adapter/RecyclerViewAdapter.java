@@ -99,6 +99,10 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                                 new VideoSaveAsync().execute(imagenameisfi);
                                 Log.i("Click on","Video");
                             }
+                            else if(imagenameisfi.charAt(imagenameisfi.length()-1)=='3'){
+                                new AudioSave().execute(imagenameisfi);
+                                Log.i("Click on","Video");
+                            }
                             else{
                                 Log.i("Click on","Image");
                                 new ImageSave().execute(imagenameisfi);
@@ -136,6 +140,10 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                             if(imagenameis.charAt(imagenameis.length()-1)=='4'){
                                 new VideoSaveAsync().execute(imagenameis);
                                 Log.i("Click on","Video");
+                            }
+                            else if(imagenameis.charAt(imagenameis.length()-1)=='3'){
+                                new AudioSave().execute(imagenameis);
+                                Log.i("Click on","Audio");
                             }
                             else{
                                 Log.i("Click on","Image");
@@ -302,6 +310,116 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                                     .setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
                                     .setDataAndType(FileProvider.getUriForFile(context, "com.example.hackathonpune.fileprovider", new File(filepath)),
                                             "image/*"), 0));
+
+            notificationManagerCompat.notify(2, builder.build());
+        }
+
+
+    }
+
+    private class AudioSave extends AsyncTask<String,Void,Void>{
+
+        String filepath;
+
+        @Override
+        protected Void doInBackground(String... strings) {
+            try {
+                URL url = new URL(ConstantsIt.LOCALURLMUSICDOWNLOAD);
+                HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+                urlConnection.setDoOutput(true);
+                urlConnection.setDoInput(true);
+                urlConnection.setRequestMethod("POST");
+                OutputStream os=urlConnection.getOutputStream();
+
+                DataOutputStream wr = new DataOutputStream(os);
+
+                try {
+                    JSONObject obj = new JSONObject();
+                    obj.put("user" , username);
+                    obj.put("name",strings[0]);
+
+                    wr.writeBytes(obj.toString());
+                    Log.i("JSON Input", obj.toString());
+                    wr.flush();
+                    wr.close();
+                    os.close();
+                } catch (JSONException ex) {
+                    ex.printStackTrace();
+                }
+
+                int responseCode = urlConnection.getResponseCode();
+                Log.i("RsponseCode", "is "+responseCode);
+
+                if(responseCode == HttpURLConnection.HTTP_OK){
+                    String server_response = readStream(urlConnection.getInputStream());
+                    Log.i("Response",server_response);
+                   StoreImage storeImage=new StoreImage();
+                   filepath=storeImage.saveAudio(context,server_response);
+
+
+                }
+
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progressDialog = new ProgressDialog(context);
+            progressDialog.setMessage("Downloading...");
+            progressDialog.setCancelable(false);
+            progressDialog.show();
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            if(filepath!=null){
+                Toast.makeText(context,"File Stored at: "+filepath,Toast.LENGTH_LONG).show();
+                Log.i("File Stored at:- ",filepath);
+                notificationshowimagethis(filepath);
+            }
+
+            else Toast.makeText(context,"Error in Saving file ",Toast.LENGTH_LONG).show();
+            progressDialog.dismiss();
+            super.onPostExecute(aVoid);
+        }
+        public void notificationshowimagethis(String filepath) {
+            // Create the NotificationChannel, but only on API 26+ because
+            // the NotificationChannel class is new and not in the support library
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                CharSequence name = "diskspace";
+                String description = "View downloaded video";
+                String channel_id = "diskspace";
+                int importance = NotificationManager.IMPORTANCE_HIGH;
+                NotificationChannel channel = new NotificationChannel(channel_id, name, importance);
+                channel.setDescription(description);
+
+                // Register the channel with the system; you can't change the importance
+                // or other notification behaviors after this
+                NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
+                notificationManager.createNotificationChannel(channel);
+            }
+
+            // show notification after saving file
+            NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(context);
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "diskspace")
+                    .setAutoCancel(true)
+                    .setSmallIcon(R.drawable.logo)
+                    .setContentTitle(filepath)
+                    .setContentText("Tap to view the image.")
+                    .setLargeIcon(BitmapFactory.decodeFile(filepath))
+                    .setPriority(NotificationCompat.PRIORITY_HIGH)
+                    .setContentIntent(PendingIntent.getActivity(context, 0,
+                            new Intent(Intent.ACTION_VIEW)
+                                    .setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
+                                    .setDataAndType(FileProvider.getUriForFile(context, "com.example.hackathonpune.fileprovider", new File(filepath)),
+                                            "audio/*"), 0));
 
             notificationManagerCompat.notify(2, builder.build());
         }

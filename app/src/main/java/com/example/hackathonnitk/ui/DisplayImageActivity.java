@@ -54,6 +54,7 @@ import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -90,13 +91,14 @@ public class DisplayImageActivity extends AppCompatActivity {
     private static final int PICK_FROM_CAMERA = 1;
     private static final int PICK_FROM_GALLARY = 2;
     private static final int PICK_VIDEO_CAMERA=3;
+    private static final int PICK_FROM_AUDIO=4;
     private static String[] PERMISSIONS_STORAGE = {
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.WRITE_EXTERNAL_STORAGE
     };
     private static final int PERMISSION_REQUEST_CODE = 100;
 
-    FloatingActionButton uploadcamera,uploadgallery,uploadvideo;
+    FloatingActionButton uploadcamera,uploadgallery,uploadvideo,uploadaudio;
     RecyclerView.Adapter adapter ;
     TextView textView;
     private Button bt_refresh;
@@ -146,6 +148,7 @@ public class DisplayImageActivity extends AppCompatActivity {
         uploadcamera=findViewById(R.id.uploadcamera);
         uploadgallery=findViewById(R.id.uploadgallery);
         uploadvideo=findViewById(R.id.uploadvideo);
+        uploadaudio=findViewById(R.id.uploadaudio);
         textView=findViewById(R.id.errormessage);
         bt_refresh=findViewById(R.id.action_refresh);
         textView.setVisibility(View.INVISIBLE);
@@ -188,8 +191,16 @@ public class DisplayImageActivity extends AppCompatActivity {
             }
         });
 
+        uploadaudio.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent audioIntent = new Intent(Intent.ACTION_PICK, MediaStore.Audio.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(audioIntent, PICK_FROM_AUDIO);
+            }
+        });
+
         // initialise cacheObject
-        cacheImage = new CacheImage(DisplayImageActivity.this);
+        //cacheImage = new CacheImage(DisplayImageActivity.this);
 
     }
 
@@ -270,6 +281,35 @@ public class DisplayImageActivity extends AppCompatActivity {
 //                    new ImageUploadIPFSandML().execute(encodedImage);
 //                    // Log.i("Imagesis",encodedImage);
 //                }
+            }
+            if(requestCode==PICK_FROM_AUDIO) {
+
+                Uri selectedImage = data.getData();
+                String[] filePathColumn = {MediaStore.Audio.Media.DATA};
+                Cursor cursor = getContentResolver().query(selectedImage, filePathColumn, null, null, null);
+                cursor.moveToFirst();
+                int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+                String imgDecodableString = cursor.getString(columnIndex);
+                String[] tmp=imgDecodableString.split("/");
+                filename=tmp[tmp.length - 1];
+                cursor.close();
+
+                File originalFile= new File(imgDecodableString);
+                String encodedBase64 = null;
+                try {
+                    FileInputStream fileInputStreamReader = new FileInputStream(originalFile);
+                    byte[] bytes = new byte[(int)originalFile.length()];
+                    fileInputStreamReader.read(bytes);
+                    encodedBase64 = Base64.encodeToString(bytes, Base64.DEFAULT);
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                Log.i("Audio",encodedBase64);
+
+                new AudioUploadIPFSandML().execute(encodedBase64);
+
             }
             if(requestCode==PICK_FROM_CAMERA){
                 Bundle extras = data.getExtras();
@@ -532,6 +572,82 @@ public class DisplayImageActivity extends AppCompatActivity {
             progressDialog.dismiss();
             if(filenameexist)
                 Toast.makeText(DisplayImageActivity.this,"Cannot Upload Same Images",Toast.LENGTH_LONG).show();
+            new ImageIPFS().execute();
+        }
+
+    }
+
+    private class AudioUploadIPFSandML extends AsyncTask<String,Void,Void>{
+        boolean filenameexist;
+        @Override
+        protected Void doInBackground(String... strings) {
+
+
+            boolean isthere=imagestring.contains(filename);
+            if(isthere){
+                filenameexist=true;
+                return null;
+            }
+            filenameexist=false;
+
+            try {
+                URL url = new URL(ConstantsIt.LOCALURLSENDVIDEO);
+                HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+                urlConnection.setDoOutput(true);
+                urlConnection.setDoInput(true);
+                urlConnection.setRequestMethod("POST");
+                OutputStream os=urlConnection.getOutputStream();
+
+                DataOutputStream wr = new DataOutputStream(os);
+
+                try {
+                    JSONObject obj = new JSONObject();
+                    obj.put("user" , username);
+                    obj.put("name",filename);
+                    obj.put("image" , strings[0]);
+                    //   Log.i("imagesis",strings[0]);
+
+                    wr.writeBytes(obj.toString());
+                    Log.i("JSON Input", obj.toString());
+                    wr.flush();
+                    wr.close();
+                    os.close();
+                } catch (JSONException ex) {
+                    ex.printStackTrace();
+                }
+
+                int responseCode = urlConnection.getResponseCode();
+                Log.i("RsponseCode", "is "+responseCode);
+
+                if(responseCode == HttpURLConnection.HTTP_OK){
+                    String server_response = readStream(urlConnection.getInputStream());
+                    Log.i("Response",server_response);
+                }
+
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progressDialog = new ProgressDialog(DisplayImageActivity.this);
+            progressDialog.setMessage("Uploading Audio...");
+            progressDialog.setCancelable(false);
+            progressDialog.show();
+
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            progressDialog.dismiss();
+            if(filenameexist)
+                Toast.makeText(DisplayImageActivity.this,"Cannot Upload Same Audio",Toast.LENGTH_LONG).show();
             new ImageIPFS().execute();
         }
 

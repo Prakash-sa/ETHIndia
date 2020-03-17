@@ -46,6 +46,25 @@ public class StoreImage {
 
     }
 
+    public String saveAudio(Context context,String s){
+
+        File file=createAudioFile();
+        byte[] decodedBytes = Base64.decode(s.getBytes(),1);
+
+        try {
+
+            FileOutputStream out = new FileOutputStream(file);
+            out.write(decodedBytes);
+            out.close();
+        } catch (Exception e) {
+            Log.e("Error", e.toString());
+
+        }
+        return file.toString();
+
+    }
+
+
 
     public String saveVideo(Context context,String s){
 
@@ -64,6 +83,7 @@ public class StoreImage {
         return file.toString();
 
     }
+
     private File createImageFile() throws IOException {
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String imageFileName = "PNG_" + timeStamp + "_";
@@ -96,6 +116,27 @@ public class StoreImage {
             image = File.createTempFile(
                     imageFileName,  /* prefix */
                     ".mp4",         /* suffix */
+                    storageDir      /* directory */
+            );
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+
+        // Save a file: path for using again
+        String cameraFilePath = "file://" + image.getAbsolutePath();
+        return image;
+    }
+
+    private File createAudioFile() {
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "PNG_" + timeStamp + "_";
+        File storageDir = new File(Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_DCIM), "Camera");
+        File image=null;
+        try {
+            image = File.createTempFile(
+                    imageFileName,  /* prefix */
+                    ".mp3",         /* suffix */
                     storageDir      /* directory */
             );
         } catch (IOException e){
